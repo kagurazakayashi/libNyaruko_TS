@@ -5,6 +5,7 @@
  export default class YQ {
     d: HTMLElement | HTMLCollectionOf<Element> | null = null;
     debug: boolean = false;
+    logLevel: number = -2;
     constructor(element?: string) {
         if (element) {
             this.d = this.dom(element);
@@ -138,11 +139,17 @@
         }
         module = '[' + dateStr + ']' + module;
         if (level == 0) {
-            console.log(module, info);
+            if (this.logLevel >= -2) {
+                console.log(module, info);
+            }
         } else if (level == -1) {
-            console.warn(module, info);
+            if (this.logLevel >= -1) {
+                console.warn(module, info);
+            }
         } else if (level == -2) {
-            console.error(module, info);
+            if (this.logLevel >= 0) {
+                console.error(module, info);
+            }
         }
     }
 }
