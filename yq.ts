@@ -1,8 +1,8 @@
 /**
- * 雅诗TS工具类
+ * 雅詩TS工具類
  * by 神楽坂雅詩
  */
-export default class YQ {
+ export default class YQ {
     d: HTMLElement | HTMLCollectionOf<Element> | null = null;
     debug: boolean = false;
     constructor(element?: string) {
@@ -11,9 +11,9 @@ export default class YQ {
         }
     }
     /**
-     * 获取 HTML DOM 对象
-     * @param {string} element 对象描述（"div",",".divclass","#divid"）
-     * @return {HTMLElement|HTMLCollectionOf<Element>|null} HTML 对象/对象组/空
+     * 獲取 HTML DOM 物件
+     * @param {string} element 物件描述（"div",",".divclass","#divid"）
+     * @return {HTMLElement|HTMLCollectionOf<Element>|null} HTML 物件/物件組/空
      */
     dom(element: string): HTMLElement | HTMLCollectionOf<Element> | null {
         if (element.length == 0) {
@@ -46,31 +46,31 @@ export default class YQ {
         return null;
     }
     /**
-     * 发送 GET 请求
-     * @param {string}   url      请求网址
-     * @param {object}   data     需要提交的数据
-     * @param {function} callback 回调方法
+     * 傳送 GET 請求
+     * @param {string}   url      請求網址
+     * @param {object}   data     需要提交的資料
+     * @param {function} callback 回撥函式
      */
-    get<T extends object>(url: string, data?: T, callback?: (data: string | null, status: number) => void): void {
+    get<T extends object>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void): void {
         this.ajax('GET', url, data, callback);
     }
     /**
      * 发送 POST 请求
-     * @param {string}   url      请求网址
-     * @param {object}   data     需要提交的数据
-     * @param {function} callback 回调方法
+     * @param {string}   url      請求網址
+     * @param {object}   data     需要提交的資料
+     * @param {function} callback 回撥函式
      */
-    post<T extends object>(url: string, data?: T, callback?: (data: string | null, status: number) => void): void {
+    post<T extends object>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void): void {
         this.ajax('POST', url, data, callback);
     }
     /**
      * 发送请求
      * @param {string}   type     请求方式
-     * @param {string}   url      请求网址
-     * @param {object}   data     需要提交的数据
-     * @param {function} callback 回调方法
+     * @param {string}   url      請求網址
+     * @param {object}   data     需要提交的資料
+     * @param {function} callback 回撥函式
      */
-    ajax<T extends object>(type: string, url: string, data?: T, callback?: (data: string | null, status: number) => void): void {
+    ajax<T extends object>(type: string, url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void): void {
         const xhr: XMLHttpRequest = new XMLHttpRequest();
         let dataArr: string[] = [];
         if (data) {
@@ -99,7 +99,7 @@ export default class YQ {
                 }, "YQ/NET", 0);
             }
             if (callback) {
-                callback(this.responseText, this.status);
+                callback(this, this.status);
             }
         };
         xhr.onerror = function () {
@@ -126,9 +126,9 @@ export default class YQ {
     }
     /**
      * 输出日志
-     * @param {any}    info   要输出的对象
-     * @param {string} module 模块
-     * @param {object} level  警告等级 0普通 -1警告 -2错误
+     * @param {any}    info   要輸出的物件
+     * @param {string} module 模組
+     * @param {object} level  警告等級 0普通 -1警告 -2錯誤
      */
     log(info: any, module: string = "", level: number = 0): void {
         const date: Date = new Date();
