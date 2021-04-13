@@ -1,11 +1,15 @@
+import MapR from "./yqmap";
+
 /**
  * 雅詩TS工具類
  * by 神楽坂雅詩
  */
- export default class YQ {
+export default class YQ {
     d: HTMLElement | HTMLCollectionOf<Element> | null = null;
     debug: boolean = false;
     logLevel: number = -2;
+    animateList: MapR = new MapR();
+
     constructor(element?: string) {
         if (element) {
             this.d = this.dom(element);
@@ -89,6 +93,7 @@
             url += '?' + dataStr;
         }
         xhr.open(type, url, true);
+        this.log("↑ " + url, "YQ/NET", -2);
         const that = this;
         xhr.onload = function () {
             if (that.debug) {
@@ -119,6 +124,7 @@
         } else {
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             if (isArg) {
+                that.log("↑ " + dataStr, "YQ/NET", -2);
                 xhr.send(dataStr);
             } else {
                 xhr.send();
@@ -151,5 +157,52 @@
                 console.error(module, info);
             }
         }
+    }
+
+    tString2string(tt: Object): string {
+        return tt.toString();
+    }
+    /**
+     * 动画
+     */
+    animate<T extends object>(obj: HTMLElement, css: T, interval: number = 1, speed: number = 1, callback?: () => void) {
+        const objId: string = obj.id
+        clearInterval(this.animateList.get(objId));
+        const that = this;
+        const timeInterval: NodeJS.Timeout = setInterval(function () {
+            var flag = true;
+            for (const key in css) {
+                if (Object.prototype.hasOwnProperty.call(css, key)) {
+                    const element = css[key];
+                    const val = parseInt(that.tString2string(element))
+                    var icur = 0;
+                    const cssstyle: CSSStyleDeclaration = window.getComputedStyle(obj, key);
+                    if (key == "opacity") {
+                        icur = Math.round(parseFloat(cssstyle.toString()) * 100);
+                    } else {
+                        icur = parseInt(cssstyle.toString());
+                    }
+                    var nspeed = (val - icur) * speed;
+                    nspeed = nspeed > 0 ? Math.ceil(nspeed) : Math.floor(nspeed);
+                    if (icur != val) {
+                        flag = false;
+                    }
+                    if (key == "opacity") {
+                        //obj.style.filter = "alpha(opacity : '+(icur + nspeed)+' )";
+                        obj.style.opacity = ((icur + nspeed) / 100).toString();
+                    } else {
+                        obj.style[parseInt(that.tString2string(key))] = icur + nspeed + "px";
+                    }
+                }
+            }
+            if (flag) {
+                clearInterval(that.animateList.get(objId));
+                that.animateList.remove(objId);
+                if (callback) {
+                    callback();
+                }
+            }
+        }, interval);
+        this.animateList.set(objId, timeInterval);
     }
 }
