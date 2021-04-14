@@ -1,4 +1,4 @@
-import MapR from "./yqmap";
+import YQmap from "./yqmap";
 
 /**
  * 雅詩TS工具類
@@ -8,7 +8,7 @@ export default class YQ {
     d: HTMLElement | HTMLCollectionOf<Element> | null = null;
     debug: boolean = false;
     logLevel: number = -2;
-    animateList: MapR = new MapR();
+    animateList: YQmap = new YQmap();
 
     constructor(element?: string) {
         if (element) {
@@ -93,7 +93,7 @@ export default class YQ {
             url += '?' + dataStr;
         }
         xhr.open(type, url, true);
-        this.log("↑ " + url, "YQ/NET", -2);
+        this.log(type + " ↑ " + url + "?" + dataStr, "YQ/NET", 0);
         const that = this;
         xhr.onload = function () {
             if (that.debug) {
@@ -204,5 +204,12 @@ export default class YQ {
             }
         }, interval);
         this.animateList.set(objId, timeInterval);
+    }
+    /**
+     * 遍历
+     */
+    each(selector: string, callback: (el: any, i: number) => void) {
+        const elements: NodeListOf<Element> = document.querySelectorAll(selector);
+        Array.prototype.forEach.call(elements, callback);
     }
 }
