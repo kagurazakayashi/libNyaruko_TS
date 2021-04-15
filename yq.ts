@@ -206,6 +206,38 @@ export default class YQ {
         this.animateList.set(objId, timeInterval);
     }
     /**
+     * 逐渐显示
+     */
+    fadeIn(obj: HTMLElement, speed: number = 1, callback?: () => void) {
+        obj.style.opacity = '1';
+        obj.style.animation = 'show ' + speed.toString() + 'ms';
+        if (callback) {
+            setTimeout(callback, speed);
+        }
+    }
+    /**
+     * 逐渐隐藏
+     */
+    fadeOut(obj: HTMLElement, speed: number = 1000, callback?: () => void) {
+        obj.style.opacity = '0';
+        obj.style.animation = "hide " + speed.toString() + 'ms';
+        if (callback) {
+            setTimeout(callback, speed);
+        }
+    }
+    /**
+     * 立即显示
+     */
+    show(obj: HTMLElement) {
+        obj.style.display = '';
+    }
+    /**
+     * 立即隐藏
+     */
+    hide(obj: HTMLElement) {
+        obj.style.display = 'none';
+    }
+    /**
      * 遍历
      */
     each(selector: string, callback: (el: any, i: number) => void) {
