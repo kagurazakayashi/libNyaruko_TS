@@ -93,7 +93,9 @@ export default class YQ {
             url += '?' + dataStr;
         }
         xhr.open(type, url, true);
-        this.log(type + " ↑ " + url + "?" + dataStr, "YQ/NET", 0);
+        if (this.debug) {
+            this.log(type + " ↑ " + url + "?" + dataStr, "YQ/NET", 0);
+        }
         const that = this;
         xhr.onload = function () {
             if (that.debug) {
