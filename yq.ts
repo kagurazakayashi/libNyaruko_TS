@@ -1,4 +1,4 @@
-import YQmap from "./yqmap";
+import YQmap from './yqmap';
 
 /**
  * 雅詩TS工具類
@@ -17,7 +17,7 @@ export default class YQ {
     }
     /**
      * 獲取 HTML DOM 物件
-     * @param {string} element 物件描述（"div",",".divclass","#divid"）
+     * @param {string} element 物件描述（'div',','.divclass','#divid'）
      * @return {HTMLElement|HTMLCollectionOf<Element>|null} HTML 物件/物件組/空
      */
     dom(element: string): HTMLElement | HTMLCollectionOf<Element> | null {
@@ -77,7 +77,7 @@ export default class YQ {
      */
     ajax<T extends object>(type: string, url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void): void {
         const xhr: XMLHttpRequest = new XMLHttpRequest();
-        let dataArr: string[] = [];
+        const dataArr: string[] = [];
         if (data) {
             for (const key in data) {
                 if (Object.prototype.hasOwnProperty.call(data, key)) {
@@ -88,13 +88,13 @@ export default class YQ {
         }
         const isArg = dataArr.length > 0;
         const dataStr = isArg ? dataArr.join('&') : '';
-        const isGET = type == 'GET'
+        const isGET = type == 'GET';
         if (isGET && isArg) {
             url += '?' + dataStr;
         }
         xhr.open(type, url, true);
         if (this.debug) {
-            this.log(type + " ↑ " + url + "?" + dataStr, "YQ/NET", 0);
+            this.log(type + ' ↑ ' + url + '?' + dataStr, 'YQ/NET', 0);
         }
         const that = this;
         xhr.onload = function () {
@@ -103,8 +103,8 @@ export default class YQ {
                     responseText: this.responseText,
                     responseLength: this.responseText.length,
                     status: this.status,
-                    statusText: this.statusText
-                }, "YQ/NET", 0);
+                    statusText: this.statusText,
+                }, 'YQ/NET', 0);
             }
             if (callback) {
                 callback(this, this.status);
@@ -114,8 +114,8 @@ export default class YQ {
             if (that.debug) {
                 that.log({
                     status: this.status,
-                    statusText: this.statusText
-                }, "YQ/NET", -2);
+                    statusText: this.statusText,
+                }, 'YQ/NET', -2);
             }
             if (callback) {
                 callback(null, this.status);
@@ -124,9 +124,9 @@ export default class YQ {
         if (isGET) {
             xhr.send();
         } else {
-            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             if (isArg) {
-                that.log("↑ " + dataStr, "YQ/NET", -2);
+                that.log('↑ ' + dataStr, 'YQ/NET', -2);
                 xhr.send(dataStr);
             } else {
                 xhr.send();
@@ -139,7 +139,7 @@ export default class YQ {
      * @param {string} module 模組
      * @param {object} level  警告等級 0普通 -1警告 -2錯誤
      */
-    log(info: any, module: string = "", level: number = 0): void {
+    log(info: any, module: string = '', level: number = 0): void {
         const date: Date = new Date();
         const dateStr = date.toLocaleTimeString();
         if (module.length > 0) {
@@ -165,35 +165,39 @@ export default class YQ {
         return tt.toString();
     }
     /**
-     * 动画
+     * 動畫
+     * @param {HTMLElement} obj 要操作的 DOM 物件
+     * @param {T} css 要進行動畫的 css 配置
+     * @param {number} interval 動畫時間
+     * @param {number} speed 動畫速度(秒)
+     * @param {function} callback 動畫完成之後的回撥
      */
     animate<T extends object>(obj: HTMLElement, css: T, interval: number = 1, speed: number = 1, callback?: () => void) {
-        const objId: string = obj.id
+        const objId: string = obj.id;
         clearInterval(this.animateList.get(objId));
         const that = this;
-        const timeInterval: NodeJS.Timeout = setInterval(function () {
-            var flag = true;
+        const timeInterval: NodeJS.Timeout = setInterval(() => {
+            let flag = true;
             for (const key in css) {
                 if (Object.prototype.hasOwnProperty.call(css, key)) {
                     const element = css[key];
-                    const val = parseInt(that.tString2string(element))
-                    var icur = 0;
+                    const val = parseInt(that.tString2string(element));
+                    let icur = 0;
                     const cssstyle: CSSStyleDeclaration = window.getComputedStyle(obj, key);
-                    if (key == "opacity") {
+                    if (key == 'opacity') {
                         icur = Math.round(parseFloat(cssstyle.toString()) * 100);
                     } else {
                         icur = parseInt(cssstyle.toString());
                     }
-                    var nspeed = (val - icur) * speed;
+                    let nspeed = (val - icur) * speed;
                     nspeed = nspeed > 0 ? Math.ceil(nspeed) : Math.floor(nspeed);
                     if (icur != val) {
                         flag = false;
                     }
-                    if (key == "opacity") {
-                        //obj.style.filter = "alpha(opacity : '+(icur + nspeed)+' )";
+                    if (key == 'opacity') {
                         obj.style.opacity = ((icur + nspeed) / 100).toString();
                     } else {
-                        obj.style[parseInt(that.tString2string(key))] = icur + nspeed + "px";
+                        obj.style[parseInt(that.tString2string(key))] = icur + nspeed + 'px';
                     }
                 }
             }
@@ -209,6 +213,9 @@ export default class YQ {
     }
     /**
      * 逐渐显示
+     * @param {HTMLElement} obj 要操作的 DOM 物件
+     * @param {number} speed 動畫速度(毫秒)
+     * @param {function} callback 動畫完成之後的回撥
      */
     fadeIn(obj: HTMLElement, speed: number = 1, callback?: () => void) {
         obj.style.opacity = '1';
@@ -219,28 +226,35 @@ export default class YQ {
     }
     /**
      * 逐渐隐藏
+     * @param {HTMLElement} obj 要操作的 DOM 物件
+     * @param {number} speed 動畫速度(毫秒)
+     * @param {function} callback 動畫完成之後的回撥
      */
     fadeOut(obj: HTMLElement, speed: number = 1000, callback?: () => void) {
         obj.style.opacity = '0';
-        obj.style.animation = "hide " + speed.toString() + 'ms';
+        obj.style.animation = 'hide ' + speed.toString() + 'ms';
         if (callback) {
             setTimeout(callback, speed);
         }
     }
     /**
      * 立即显示
+     * @param {HTMLElement} obj 要操作的 DOM 物件
      */
     show(obj: HTMLElement) {
         obj.style.display = '';
     }
     /**
      * 立即隐藏
+     * @param {HTMLElement} obj 要操作的 DOM 物件
      */
     hide(obj: HTMLElement) {
         obj.style.display = 'none';
     }
     /**
-     * 遍历
+     * 遍歷 DOM 物件
+     * @param {string} selector 要操作的 DOM 物件描述
+     * @param {function} callback 處理遍歷物件的函式
      */
     each(selector: string, callback: (el: any, i: number) => void) {
         const elements: NodeListOf<Element> = document.querySelectorAll(selector);
