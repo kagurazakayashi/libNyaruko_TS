@@ -203,7 +203,7 @@ export default class YQ {
             }
             if (flag) {
                 clearInterval(that.animateList.get(objId));
-                that.animateList.remove(objId);
+                that.animateList.delete(objId);
                 if (callback) {
                     callback();
                 }
@@ -259,5 +259,38 @@ export default class YQ {
     each(selector: string, callback: (el: any, i: number) => void) {
         const elements: NodeListOf<Element> = document.querySelectorAll(selector);
         Array.prototype.forEach.call(elements, callback);
+    }
+    /**
+     * 获得网址中 # 后面的参数
+     * @param {string} getKey 获取指定的键（返回 string），若不提供此值，则返回键值数组（string[][]）
+     * @return {string[]|string} 取得的键值或值
+     */
+    argv(getKey?: string): string[][] | string {
+        const argvs: string[][] = [];
+        const argStr: string = window.location.hash;
+        if (argStr.length <= 1) {
+            return argvs;
+        }
+        const argArr: string[] = argStr.substring(1).split('&');
+        for (const key in argArr) {
+            if (Object.prototype.hasOwnProperty.call(argArr, key)) {
+                const nowArg: string = argArr[key];
+                const nowArr: string[] = nowArg.split('=');
+                const nowKey: string = nowArr[0];
+                let nowVal: string = '';
+                if (nowArr.length > 0) {
+                    nowVal = nowArr[1];
+                }
+                if (getKey && getKey == nowKey) {
+                    return nowVal;
+                } else {
+                    argvs.push([nowKey, nowVal]);
+                }
+            }
+        }
+        if (getKey) {
+            return '';
+        }
+        return argvs;
     }
 }

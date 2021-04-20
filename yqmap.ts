@@ -32,7 +32,7 @@
      * @param {string} key 键
      * @return {boolean} 是否移除成功（还是本来就没有）
      */
-    remove(key: string) {
+    delete(key: string) {
         if (this.has(key)) {
             delete this.items[key];
             return true;
