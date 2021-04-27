@@ -6,7 +6,7 @@ import YQmap from './yqmap';
  */
 export default class YQ {
     d: HTMLElement | HTMLCollectionOf<Element> | null = null;
-    debug: boolean = false;
+    debug: boolean = true;
     logLevel: number = -2;
     animateList: YQmap = new YQmap();
 
@@ -76,6 +76,9 @@ export default class YQ {
      * @param {function} callback 回撥函式
      */
     ajax<T extends object>(type: string, url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void): void {
+        if (url.length == 0) {
+            return;
+        }
         const xhr: XMLHttpRequest = new XMLHttpRequest();
         const dataArr: string[] = [];
         if (data) {
@@ -93,9 +96,6 @@ export default class YQ {
             url += '?' + dataStr;
         }
         xhr.open(type, url, true);
-        if (this.debug) {
-            this.log(type + ' ↑ ' + url + '?' + dataStr, 'YQ/NET', 0);
-        }
         const that = this;
         xhr.onload = function () {
             if (that.debug) {
@@ -122,13 +122,21 @@ export default class YQ {
             }
         };
         if (isGET) {
+            if (this.debug) {
+                this.log(type + ' ↑ ' + url + '?' + dataStr, 'YQ/NET', 0);
+            }
             xhr.send();
         } else {
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
             if (isArg) {
-                that.log('↑ ' + dataStr, 'YQ/NET', -2);
+                if (this.debug) {
+                    this.log(type + ' ↑ ' + url + '?' + dataStr, 'YQ/NET', 0);
+                }
                 xhr.send(dataStr);
             } else {
+                if (this.debug) {
+                    this.log(type + ' ↑ ' + url, 'YQ/NET', 0);
+                }
                 xhr.send();
             }
         }
@@ -147,15 +155,15 @@ export default class YQ {
         }
         module = '[' + dateStr + ']' + module;
         if (level == 0) {
-            if (this.logLevel >= -2) {
+            if (this.logLevel <= -2) {
                 console.log(module, info);
             }
         } else if (level == -1) {
-            if (this.logLevel >= -1) {
+            if (this.logLevel <= -1) {
                 console.warn(module, info);
             }
         } else if (level == -2) {
-            if (this.logLevel >= 0) {
+            if (this.logLevel <= 0) {
                 console.error(module, info);
             }
         }
@@ -256,7 +264,7 @@ export default class YQ {
      * @param {string} selector 要操作的 DOM 物件描述
      * @param {function} callback 處理遍歷物件的函式
      */
-    each(selector: string, callback: (el: any, i: number) => void) {
+    each(selector: string, callback: (el: any, i: number) => void): void {
         const elements: NodeListOf<Element> = document.querySelectorAll(selector);
         Array.prototype.forEach.call(elements, callback);
     }
