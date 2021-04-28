@@ -1,11 +1,13 @@
 /**
- * 在 map 不可用的环境下代替 map 的工作
+ * 雅詩TS工具類
+ * 在 map 不可用的環境下代替 map 的工作
+ * by 神楽坂雅詩
  */
  export default class YQmap {
     items: any = {};
     /**
-     * 设置字典值
-     * @param {string} key 键
+     * 設定字典值
+     * @param {string} key 鍵
      * @param {any} value 值
      */
     set(key: string, value: any): void {
@@ -13,24 +15,24 @@
     }
     /**
      * 取得字典值
-     * @param {string} key 键
+     * @param {string} key 鍵
      * @return {any} 值
      */
     get(key: string): any {
         return this.has(key) ? this.items[key] : undefined;
     }
     /**
-     * 是否拥有某个键值
-     * @param {string} key 键
-     * @return {boolean} 是否拥有
+     * 是否擁有某個鍵值
+     * @param {string} key 鍵
+     * @return {boolean} 是否擁有
      */
     has(key: string): boolean {
         return key in this.items;
     }
     /**
-     * 移除键值
-     * @param {string} key 键
-     * @return {boolean} 是否移除成功（还是本来就没有）
+     * 移除鍵值
+     * @param {string} key 鍵
+     * @return {boolean} 是否移除成功（還是本來就沒有）
      */
     delete(key: string) {
         if (this.has(key)) {
@@ -40,8 +42,8 @@
         return false;
     }
     /**
-     * 获得所有的值
-     * @return {any[]} 所有值得数组
+     * 獲得所有的值
+     * @return {any[]} 所有值的陣列
      */
     values(): any[] {
         const values: any[] = [];
@@ -59,15 +61,15 @@
         this.items = {};
     }
     /**
-     * 查询有多少条目
-     * @return {number} 条目数量
+     * 查詢有多少條目
+     * @return {number} 條目數量
      */
     size(): number {
         return Object.keys(this.items).length;
     }
     /**
-     * 获取所有键值
-     * @return {any} 所有键值
+     * 獲取所有鍵值
+     * @return {any} 所有鍵值
      */
     getItems(): any {
         return this.items;
