@@ -1,10 +1,8 @@
-import { Node } from "typescript";
-
 /**
  * 雅詩TS工具類
  * by 神楽坂雅詩
  */
-export default class YQ {
+ export default class YQ {
     /**
      * 獲取 HTML DOM 物件
      * @param {string} element 物件描述（'div',','.divclass','#divid'）
@@ -39,6 +37,14 @@ export default class YQ {
             return elements;
         }
         return null;
+    }
+    /**
+     * 快捷通过 id 获取取 div（假设该 id 一定存在）
+     * @param {string} element div 的 id
+     * @return {HTMLDivElement} div 物件
+     */
+    static divById(element: string): HTMLDivElement {
+        return document.getElementById(element) as HTMLDivElement;
     }
     /**
      * 傳送 GET 請求
@@ -271,5 +277,26 @@ export default class YQ {
             templateHTML = templateHTML.replace(replaceK, replaceV);
         }
         return templateHTML;
+    }
+
+    /**
+     * 粗略时间差描述文字
+     * @param {number} time 时间戳（默认用秒级）
+     * @param {number[]} timeArr 自定义时间分隔
+     * @param {string[]} timeUnitStr 自定义时间分隔文本
+     * @return {string} 描述文本
+     */
+    static timeDiffStr(time: number, timeArr: number[] = [525600, 262080, 43200, 1440, 60], timeUnitStr: string[] = ['年', '半年', '月', '日', '小时', '前']): string {
+        let tTime: number = 0;
+        let tStr: string = '';
+        for (let i = 0; i < timeArr.length; i++) {
+            if (time > timeArr[i]) {
+                tTime = time / timeArr[i];
+                tStr = timeUnitStr[i];
+                break;
+            }
+        }
+        const tf: string[] = tTime.toString().split('.');
+        return tf[0] + '' + tStr + timeUnitStr.pop();
     }
 }
