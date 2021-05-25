@@ -248,11 +248,15 @@
      */
     static stringNode(strSource: string, strStart: string, strEnd: string): string {
         const startIndex: number = strSource.indexOf(strStart) + strStart.length;
-        const endIndex: number = strSource.indexOf(strEnd);
-        if (startIndex >= 0 && endIndex >= 0) {
-            return strSource.substring(startIndex, endIndex - startIndex);
+        if (startIndex < 0) {
+            return strSource;
         }
-        return '';
+        const noStartText = strSource.substring(startIndex);
+        const endIndex: number = noStartText.indexOf(strEnd);
+        if (endIndex < 0) {
+            return strSource;
+        }
+        return noStartText.substring(0, endIndex);
     }
     /**
      * 讀入模板網頁
