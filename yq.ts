@@ -284,11 +284,11 @@
     }
 
     /**
-     * 粗略时间差描述文字
-     * @param {number} time 时间戳（默认用秒级）
-     * @param {number[]} timeArr 自定义时间分隔
-     * @param {string[]} timeUnitStr 自定义时间分隔文本
-     * @return {string} 描述文本
+     * 粗略時間差描述文字
+     * @param {number} time 時間戳（預設用秒級）
+     * @param {number[]} timeArr 自定義時間分隔
+     * @param {string[]} timeUnitStr 自定義時間分隔文字
+     * @return {string} 描述文字
      */
     static timeDiffStr(time: number, timeArr: number[] = [525600, 262080, 43200, 1440, 60], timeUnitStr: string[] = ['年', '半年', '月', '日', '小时', '前']): string {
         let tTime: number = 0;
@@ -302,5 +302,64 @@
         }
         const tf: string[] = tTime.toString().split('.');
         return tf[0] + '' + tStr + timeUnitStr.pop();
+    }
+
+    /**
+     * 從物件中查詢屬性並返回，並確定每個屬性是否存在，否則提供預設值
+     * @param {any} obj 要從哪個元素查詢
+     * @param {string} property 屬性路徑 obj1.obj2.obj3
+     * @param {any} defaultVal 沒有找到時返回的預設值
+     * @param {boolean} showWarn 是否在瀏覽器控制檯顯示找不到物件的資訊
+     * @return {boolean} isok 是否有擁有此屬性
+     * @return {string} path 物件路徑
+     * @return {string} type 物件型別
+     * @return {any} obj 找到的屬性物件或預設值
+    */
+    static getProperty(obj: any, property: string, defaultVal: any = null, showWarn: boolean = false): {
+        isok: boolean;
+        path: string;
+        type: string;
+        obj: any;
+    } {
+        const propertys: string[] = property.split('.');
+        let path: string = 'obj';
+        let type: string = 'undefined';
+        for (let i = 0; i < propertys.length; i++) {
+            const prop = propertys[i];
+            path = path + '.' + prop;
+            type = typeof eval(path);
+            if (type == 'undefined') {
+                if (showWarn) {
+                    console.warn('Cannot read property "' + path + '"');
+                }
+                return {
+                    isok: false,
+                    path: path,
+                    type: type,
+                    obj: defaultVal,
+                };
+            }
+        }
+        const isOK = type != 'undefined';
+        const rObj = eval(path);
+        return {
+            isok: isOK,
+            path: path,
+            type: type,
+            obj: rObj,
+        };
+    }
+
+    /**
+     * 從物件中查詢屬性並返回，並確定每個屬性是否存在，否則提供預設值（只返回精簡資訊）
+     * @param {any} obj 要從哪個元素查詢
+     * @param {string} property 屬性路徑 obj1.obj2.obj3
+     * @param {any} defaultVal 沒有找到時返回的預設值
+     * @param {boolean} showWarn 是否在瀏覽器控制檯顯示找不到物件的資訊
+     * @return {any} 找到的屬性物件或預設值
+    */
+    static getProp(obj: any, property: string, defaultVal: any = null, showWarn: boolean = true): any {
+        const prop: { isok: boolean; path: string; type: string; obj: any; } = YQ.getProperty(obj, property, defaultVal, showWarn);
+        return prop.obj;
     }
 }
