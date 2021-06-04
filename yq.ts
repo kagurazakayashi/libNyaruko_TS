@@ -49,32 +49,32 @@
     /**
      * 傳送 GET 請求
      * @param {string}   url      請求網址
-     * @param {object}   data     需要提交的資料
+     * @param {unknown}   data     需要提交的資料
      * @param {function} callback 回撥函式
      * @param {boolean}  async    是否使用非同步請求
      */
-    static get<T extends object>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async: boolean = true): void {
-        YQ.ajax('GET', url, data, callback);
+    static get<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true): void {
+        YQ.ajax('GET', url, data, callback, async);
     }
     /**
      * 傳送 POST 請求
      * @param {string}   url      請求網址
-     * @param {object}   data     需要提交的資料
+     * @param {unknown}   data     需要提交的資料
      * @param {function} callback 回撥函式
      * @param {boolean}  async    是否使用非同步請求
      */
-    static post<T extends object>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async: boolean = true): void {
-        YQ.ajax('POST', url, data, callback);
+    static post<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true): void {
+        YQ.ajax('POST', url, data, callback, async);
     }
     /**
      * 傳送請求
      * @param {string}   type     請求方式
      * @param {string}   url      請求網址
-     * @param {object}   data     需要提交的資料
+     * @param {unknown}   data     需要提交的資料
      * @param {function} callback 回撥函式
      * @param {boolean}  async    是否使用非同步請求
      */
-    static ajax<T extends object>(type: string, url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async: boolean = true): void {
+    static ajax<T extends unknown>(type: string, url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true): void {
         if (url.length == 0) {
             return;
         }
@@ -94,7 +94,7 @@
         if (isGET && isArg) {
             url += '?' + dataStr;
         }
-        xhr.open(type, url, true);
+        xhr.open(type, url, async);
         xhr.onload = function () {
             if (callback) {
                 callback(this, this.status);
@@ -122,7 +122,7 @@
      * @param {string} module 模組
      * @param {object} level  警告等級 0普通 -1警告 -2錯誤
      */
-    static log(info: any, module: string = '', level: number = 0): void {
+    static log(info: unknown, module = '', level = 0): void {
         const date: Date = new Date();
         const dateStr = date.toLocaleTimeString();
         if (module.length > 0) {
@@ -143,7 +143,7 @@
      * @param {number}      speed    動畫速度(毫秒)
      * @param {function}    callback 動畫完成之後的回撥
      */
-    static fadeIn(obj: HTMLElement, speed: number = 1, callback?: () => void) {
+    static fadeIn(obj: HTMLElement, speed = 1, callback?: () => void):void {
         obj.style.opacity = '1';
         obj.style.animation = 'show ' + speed.toString() + 'ms';
         if (callback) {
@@ -156,7 +156,7 @@
      * @param {number}      speed    動畫速度(毫秒)
      * @param {function}    callback 動畫完成之後的回撥
      */
-    static fadeOut(obj: HTMLElement, speed: number = 1000, callback?: () => void) {
+    static fadeOut(obj: HTMLElement, speed = 1000, callback?: () => void):void {
         obj.style.opacity = '0';
         obj.style.animation = 'hide ' + speed.toString() + 'ms';
         if (callback) {
@@ -167,14 +167,14 @@
      * 立即顯示
      * @param {HTMLElement} obj 要操作的 DOM 物件
      */
-    static show(obj: HTMLElement) {
+    static show(obj: HTMLElement):void {
         obj.style.display = '';
     }
     /**
      * 立即隱藏
      * @param {HTMLElement} obj 要操作的 DOM 物件
      */
-    static hide(obj: HTMLElement) {
+    static hide(obj: HTMLElement):void {
         obj.style.display = 'none';
     }
     /**
@@ -182,7 +182,7 @@
      * @param {string} selector 要操作的 DOM 物件描述
      * @param {function} callback 處理遍歷物件的函式
      */
-    static each(selector: string, callback: (el: any, i: number) => void): void {
+    static each(selector: string, callback: (el: unknown, i: number) => void): void {
         const elements: NodeListOf<Element> = document.querySelectorAll(selector);
         Array.prototype.forEach.call(elements, callback);
     }
@@ -203,7 +203,7 @@
                 const nowArg: string = argArr[key];
                 const nowArr: string[] = nowArg.split('=');
                 const nowKey: string = nowArr[0];
-                let nowVal: string = '';
+                let nowVal = '';
                 if (nowArr.length > 0) {
                     nowVal = nowArr[1];
                 }
@@ -265,7 +265,7 @@
      * @param {string} templateID 取出模板檔案中的哪個模板ID
      * @return {string} 从模板生成的 HTML
      */
-    static loadTemplateHtml(templateFileCode: string, replaceList: string[][], templateID: string = ''): string {
+    static loadTemplateHtml(templateFileCode: string, replaceList: string[][], templateID = ''): string {
         let fStart = '';
         const fEnd = '</template>';
         if (templateID.length == 0) {
@@ -291,8 +291,8 @@
      * @return {string} 描述文字
      */
     static timeDiffStr(time: number, timeArr: number[] = [525600, 262080, 43200, 1440, 60], timeUnitStr: string[] = ['年', '半年', '月', '日', '小时', '前']): string {
-        let tTime: number = 0;
-        let tStr: string = '';
+        let tTime = 0;
+        let tStr = '';
         for (let i = 0; i < timeArr.length; i++) {
             if (time > timeArr[i]) {
                 tTime = time / timeArr[i];
@@ -306,24 +306,24 @@
 
     /**
      * 從物件中查詢屬性並返回，並確定每個屬性是否存在，否則提供預設值
-     * @param {any} obj 要從哪個元素查詢
+     * @param {unknown} obj 要從哪個元素查詢
      * @param {string} property 屬性路徑 obj1.obj2.obj3
-     * @param {any} defaultVal 沒有找到時返回的預設值
+     * @param {unknown} defaultVal 沒有找到時返回的預設值
      * @param {boolean} showWarn 是否在瀏覽器控制檯顯示找不到物件的資訊
      * @return {boolean} isok 是否有擁有此屬性
      * @return {string} path 物件路徑
      * @return {string} type 物件型別
-     * @return {any} obj 找到的屬性物件或預設值
+     * @return {unknown} obj 找到的屬性物件或預設值
     */
-    static getProperty(obj: any, property: string, defaultVal: any = null, showWarn: boolean = false): {
+    static getProperty(obj: unknown, property: string, defaultVal: unknown = null, showWarn = false): {
         isok: boolean;
         path: string;
         type: string;
-        obj: any;
+        obj: unknown;
     } {
         const propertys: string[] = property.split('.');
-        let path: string = 'obj';
-        let type: string = 'undefined';
+        let path = 'obj';
+        let type = 'undefined';
         for (let i = 0; i < propertys.length; i++) {
             const prop = propertys[i];
             path = path + '.' + prop;
@@ -352,14 +352,14 @@
 
     /**
      * 從物件中查詢屬性並返回，並確定每個屬性是否存在，否則提供預設值（只返回精簡資訊）
-     * @param {any} obj 要從哪個元素查詢
+     * @param {unknown} obj 要從哪個元素查詢
      * @param {string} property 屬性路徑 obj1.obj2.obj3
-     * @param {any} defaultVal 沒有找到時返回的預設值
+     * @param {unknown} defaultVal 沒有找到時返回的預設值
      * @param {boolean} showWarn 是否在瀏覽器控制檯顯示找不到物件的資訊
      * @return {any} 找到的屬性物件或預設值
     */
-    static getProp(obj: any, property: string, defaultVal: any = null, showWarn: boolean = true): any {
-        const prop: { isok: boolean; path: string; type: string; obj: any; } = YQ.getProperty(obj, property, defaultVal, showWarn);
+    static getProp(obj: unknown, property: string, defaultVal: unknown = null, showWarn = true): unknown {
+        const prop: { isok: boolean; path: string; type: string; obj: unknown; } = YQ.getProperty(obj, property, defaultVal, showWarn);
         return prop.obj;
     }
 }
