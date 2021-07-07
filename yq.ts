@@ -2,7 +2,7 @@
  * 雅詩TS工具類
  * by 神楽坂雅詩
  */
- export default class YQ {
+export default class YQ {
     /**
      * 獲取 HTML DOM 物件
      * @param {string} element 物件描述（'div',','.divclass','#divid'）
@@ -143,7 +143,7 @@
      * @param {number}      speed    動畫速度(毫秒)
      * @param {function}    callback 動畫完成之後的回撥
      */
-    static fadeIn(obj: HTMLElement, speed = 1, callback?: () => void):void {
+    static fadeIn(obj: HTMLElement, speed = 1, callback?: () => void): void {
         obj.style.opacity = '1';
         obj.style.animation = 'show ' + speed.toString() + 'ms';
         if (callback) {
@@ -156,7 +156,7 @@
      * @param {number}      speed    動畫速度(毫秒)
      * @param {function}    callback 動畫完成之後的回撥
      */
-    static fadeOut(obj: HTMLElement, speed = 1000, callback?: () => void):void {
+    static fadeOut(obj: HTMLElement, speed = 1000, callback?: () => void): void {
         obj.style.opacity = '0';
         obj.style.animation = 'hide ' + speed.toString() + 'ms';
         if (callback) {
@@ -167,14 +167,14 @@
      * 立即顯示
      * @param {HTMLElement} obj 要操作的 DOM 物件
      */
-    static show(obj: HTMLElement):void {
+    static show(obj: HTMLElement): void {
         obj.style.display = '';
     }
     /**
      * 立即隱藏
      * @param {HTMLElement} obj 要操作的 DOM 物件
      */
-    static hide(obj: HTMLElement):void {
+    static hide(obj: HTMLElement): void {
         obj.style.display = 'none';
     }
     /**
