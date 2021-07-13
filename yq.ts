@@ -3,6 +3,8 @@
  * by 神楽坂雅詩
  */
 export default class YQ {
+    static yqStr = 'YQ';
+
     /**
      * 獲取 HTML DOM 物件
      * @param {string} element 物件描述（'div',','.divclass','#divid'）
@@ -38,14 +40,21 @@ export default class YQ {
         }
         return null;
     }
+
     /**
      * 快捷通过 id 获取取 div（假设该 id 一定存在）
      * @param {string} element div 的 id
      * @return {HTMLDivElement} div 物件
      */
     static divById(element: string): HTMLDivElement {
+        const divdom: HTMLElement | null = document.getElementById(element);
+        if (!divdom) {
+            YQ.log(element + ' Not Found', YQ.yqStr, -2);
+            return document.createElement('div');
+        }
         return document.getElementById(element) as HTMLDivElement;
     }
+
     /**
      * 傳送 GET 請求
      * @param {string}   url      請求網址
@@ -90,17 +99,20 @@ export default class YQ {
         }
         const isArg = dataArr.length > 0;
         const dataStr = isArg ? dataArr.join('&') : '';
+        // YQ.log(`请求网址 ${url} , 数据 ${dataStr}`, YQ.yqStr);
         const isGET = type == 'GET';
         if (isGET && isArg) {
             url += '?' + dataStr;
         }
         xhr.open(type, url, async);
         xhr.onload = function () {
+            // YQ.log(`请求网址 ${url} 成功，返回数据 ${this.responseText}`, YQ.yqStr);
             if (callback) {
                 callback(this, this.status);
             }
         };
         xhr.onerror = function () {
+            // YQ.log(`请求网址 ${url} 失败，返回状态码 ${this.status}`, YQ.yqStr, -2);
             if (callback) {
                 callback(null, this.status);
             }
@@ -116,6 +128,7 @@ export default class YQ {
             }
         }
     }
+
     /**
      * 輸出日誌
      * @param {any}    info   要輸出的物件
@@ -137,6 +150,7 @@ export default class YQ {
             console.error(module, info);
         }
     }
+
     /**
      * 逐漸顯示
      * @param {HTMLElement} obj      要操作的 DOM 物件
@@ -163,6 +177,7 @@ export default class YQ {
             setTimeout(callback, speed);
         }
     }
+
     /**
      * 立即顯示
      * @param {HTMLElement} obj 要操作的 DOM 物件
@@ -177,6 +192,7 @@ export default class YQ {
     static hide(obj: HTMLElement): void {
         obj.style.display = 'none';
     }
+
     /**
      * 遍歷 DOM 物件
      * @param {string} selector 要操作的 DOM 物件描述
@@ -186,6 +202,7 @@ export default class YQ {
         const elements: NodeListOf<Element> = document.querySelectorAll(selector);
         Array.prototype.forEach.call(elements, callback);
     }
+
     /**
      * 獲得網址中 # 後面的引數
      * @param {string} getKey 獲取指定的鍵（返回 string），若不提供此值，則返回鍵值陣列（string[][]）
@@ -219,6 +236,7 @@ export default class YQ {
         }
         return argvs;
     }
+
     /**
      * 將 HTML 字串轉換為 DOM
      * @param {string} dom DOM 字串
@@ -239,6 +257,7 @@ export default class YQ {
         saveElement.appendChild(node);
         return saveElement.innerHTML;
     }
+
     /**
      * 獲取兩字串之間的內容
      * @param {string} strSource 原始字串
@@ -258,6 +277,7 @@ export default class YQ {
         }
         return noStartText.substring(0, endIndex);
     }
+
     /**
      * 讀入模板網頁
      * @param {string} templateFileCode 模板檔案內容
@@ -366,10 +386,10 @@ export default class YQ {
     /**
      * 檢查數值是否在區間中
      * @param {string | number[]} scope
-     * 區間描述文字，如 "(0,10)"
+     * string:   區間描述文字，如 "(0,10)"
      *     "(,100]"  : ∞ < x ≤ 100
      *     "[0,100)" : 0 ≤ x < 100
-     * 或 區間數字陣列 [最小值,最大值]
+     * number[]: 區間數字陣列 [最小值,最大值]
      * @param {number} value 要被測量的數字
      * @param {boolean} isNewNum 返回符合範圍的 ±1 數字 (value 必須輸入整數)
      * @return {number} isNewNum ? 符合範圍的 ±1 數字 : (-1小於 0正常 1大於)
@@ -383,12 +403,12 @@ export default class YQ {
             const minVal: number = isNumArr ? (scope as number[])[0] : parseFloat(scopeArr[0]);
             if (incStart) {
                 if (value < minVal) {
-                    // console.log(`数值 ${value} 小于等于 标准值 ${scope} 中的 ${minVal}`);
+                    // YQ.log(`数值 ${value} 小于等于 标准值 ${scope} 中的 ${minVal}`, YQ.yqStr);
                     return isNewNum ? minVal : -1;
                 }
             } else {
                 if (value <= minVal) {
-                    // console.log(`数值 ${value} 小于 标准值 ${scope} 中的 ${minVal}`);
+                    // YQ.log(`数值 ${value} 小于 标准值 ${scope} 中的 ${minVal}`, YQ.yqStr);
                     return isNewNum ? minVal + 1 : -1;
                 }
             }
@@ -397,17 +417,43 @@ export default class YQ {
             const maxVal: number = isNumArr ? (scope as number[])[1] : parseFloat(scopeArr[1]);
             if (incEnd) {
                 if (value > maxVal) {
-                    // console.log(`数值 ${value} 大于等于 标准值 ${scope} 中的 ${maxVal}`);
+                    // YQ.log(`数值 ${value} 大于等于 标准值 ${scope} 中的 ${maxVal}`, YQ.yqStr);
                     return isNewNum ? maxVal : 1;
                 }
             } else {
                 if (value >= maxVal) {
-                    // console.log(`数值 ${value} 大于 标准值 ${scope} 中的 ${maxVal}`);
+                    // YQ.log(`数值 ${value} 大于 标准值 ${scope} 中的 ${maxVal}`, YQ.yqStr);
                     return isNewNum ? maxVal - 1 : 1;
                 }
             }
         }
-        // console.log(`数值 ${value} 在此区间 ${scope}`);
+        // YQ.log(`数值 ${value} 在此区间 ${scope}`, YQ.yqStr);
         return isNewNum ? value : 0;
+    }
+
+    /**
+     * 物件的長度
+     * @param {object} obj 要檢查的物件 [] 或 {}
+     * @return {number} 物件的長度
+    */
+    static count(obj: object): number {
+        const objKeys: Array<any> = Object.keys(obj);
+        // YQ.log('对象列表：', YQ.yqStr);
+        // console.log(YQ.yqStr, objKeys);
+        return objKeys.length;
+    }
+    /**
+     * 從物件陣列中移除所有長度為 0 的物件 {}
+     * @param {object[]} obj 要檢查的物件陣列
+     * @return {object[]} 清理後的物件陣列
+    */
+    static clearEmpty(obj: object[]): object[] {
+        let newObj: object[] = [];
+        for (const nowObj of obj) {
+            if (YQ.count(nowObj) > 0) {
+                newObj.push(nowObj);
+            }
+        }
+        return newObj;
     }
 }
