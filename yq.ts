@@ -7,10 +7,11 @@ export default class YQ {
 
     /**
      * 獲取 HTML DOM 物件
-     * @param {string} element 物件描述（'div',','.divclass','#divid'）
-     * @return {HTMLElement|HTMLCollectionOf<Element>|null} HTML 物件/物件組/空
+     * @param {string} element 物件描述（'div','.divclass','#divid','[value]'）
+     * @param {HTMLElement} parentDOM 要從哪個元素中獲取
+     * @return {HTMLElement|HTMLElement[]|null} HTML 物件/物件組/空
      */
-    static dom(element: string): HTMLElement | HTMLCollectionOf<Element> | null {
+    static dom(element: string, parentDOM = document.body): HTMLElement | HTMLElement[] | null {
         if (element.length == 0) {
             return null;
         }
@@ -20,23 +21,33 @@ export default class YQ {
             if (element.length == 0) {
                 return null;
             }
-            const elements: HTMLCollectionOf<Element> = document.getElementsByClassName(element);
+            const elements: HTMLCollectionOf<Element> = parentDOM.getElementsByClassName(element);
             if (elements.length == 0) {
                 return null;
             }
-            return elements;
+            return Array.prototype.slice.call(elements);
         } else if (mode == '#') {
             element = element.substr(1);
             if (element.length == 0) {
                 return null;
             }
             return document.getElementById(element);
+        } else if (mode == '[') {
+            element = element.substr(1, element.length - 2);
+            if (element.length == 0) {
+                return null;
+            }
+            const elements: HTMLElement[] = YQ.getHasAttribute(element, parentDOM);
+            if (elements.length == 0) {
+                return null;
+            }
+            return elements;
         } else if ((mode >= 'a' && mode <= 'z') || (mode >= 'A' && mode <= 'Z')) {
             const elements: HTMLCollectionOf<Element> = document.getElementsByTagName(element);
             if (elements.length == 0) {
                 return null;
             }
-            return elements;
+            return Array.prototype.slice.call(elements);
         }
         return null;
     }
@@ -450,10 +461,61 @@ export default class YQ {
     static clearEmpty(obj: object[]): object[] {
         let newObj: object[] = [];
         for (const nowObj of obj) {
-            if (YQ.count(nowObj) > 0) {
+            if (nowObj && YQ.count(nowObj) > 0) {
                 newObj.push(nowObj);
             }
         }
         return newObj;
+    }
+
+    /**
+     * 取出指定 DOM 元素中的所有子元素
+     * @param {HTMLElement} parentDOM 要檢查的元素
+     * @param {boolean} structure 子元素陣列是否需要具有層次結構
+     * @return {HTMLElement[]} 子元素陣列（不帶有層次結構，一維）
+     * @return {HTMLElement[][]} 子元素多維陣列（帶有層次結構，不定維度）
+    */
+    static getChildrens(parentDOM = document.body, structure = false): HTMLElement[] | HTMLElement[][] {
+        const clilds: HTMLElement[] = [];
+        const getChildrenFunc = (parent: HTMLElement, struct: boolean): HTMLElement[][] => {
+            let childDoms: HTMLElement[] | HTMLElement[][] | HTMLElement[][][] = [];
+            if (struct) {
+                (childDoms as HTMLElement[]).push(parent);
+            } else {
+                clilds.push(parent);
+            }
+            if (parent.children.length > 0) {
+                const children: HTMLCollection = parent.children;
+                const childrenLen: number = children.length;
+                for (let i = 0; i < childrenLen; i++) {
+                    const childrenElement: HTMLElement = children[i] as HTMLElement;
+                    const nowChildrens: HTMLElement[][] = getChildrenFunc(childrenElement, struct);
+                    if (struct) (childDoms as HTMLElement[][][]).push(nowChildrens);
+                }
+            }
+            return childDoms as HTMLElement[][];
+        }
+        if (structure) {
+            return getChildrenFunc(parentDOM, structure);
+        } else {
+            getChildrenFunc(parentDOM, structure);
+            return clilds;
+        }
+    }
+    /**
+     * 取出指定 DOM 元素中的所有包含指定屬性的元素
+     * @param {boolean} attributeName 需要包含的屬性
+     * @param {HTMLElement} parentDOM 要檢查的元素
+     * @return {HTMLElement[]} 包含該屬性的元素列表
+    */
+    static getHasAttribute(attributeName: string, parentDOM = document.body): HTMLElement[] {
+        const childrens: HTMLElement[] = YQ.getChildrens(parentDOM, false) as HTMLElement[];
+        const childOK: HTMLElement[] = [];
+        for (const children of childrens) {
+            if (children.hasAttribute(attributeName)) {
+                childOK.push(children);
+            }
+        }
+        return childOK;
     }
 }
