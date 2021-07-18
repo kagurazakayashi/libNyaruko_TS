@@ -518,4 +518,46 @@ export default class YQ {
         }
         return childOK;
     }
+
+    /**
+     * 多語言：根據 HTML 元素中的 y-lang 屬性將語言文字呈現到該元素，應在 DOM 載入完成後使用。
+     * 例如： <div y-lang="zh::正在加载::en::Loading"></div>
+     * @param {string} language 語言名稱
+     * @param {boolean} removeAttr 操作完成後移除屬性
+     * @param {HTMLElement} parentDOM 只處理此指定元素中的內容
+     * @return {number} 已處理的元素數量
+    */
+    static yLang(language: string, removeAttr = true, parentDOM = document.body): number {
+        const attrName = 'y-lang';
+        let ii = 0;
+        const allAttr: HTMLElement[] = YQ.getHasAttribute(attrName, parentDOM);
+        for (const nowDom of allAttr) {
+            const attrInfo: string | null = nowDom.getAttribute(attrName);
+            if (attrInfo == null || attrInfo.length == 0) {
+                continue;
+            }
+            const langInfos: string[] = attrInfo.split('::');
+            let langKey = '';
+            let langVal = '';
+            for (let i = 0; i < langInfos.length; i++) {
+                if (i % 2 == 0) {
+                    langKey = langInfos[i];
+                } else {
+                    langVal = langInfos[i];
+                    // 填充語言文字
+                    if (langKey == language) {
+                        if (nowDom.innerText != langVal) {
+                            nowDom.innerText = langVal;
+                        }
+                        if (removeAttr) {
+                            nowDom.removeAttribute(attrName);
+                        }
+                        ii++;
+                        break;
+                    }
+                }
+            }
+        }
+        return ii;
+    }
 }
