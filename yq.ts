@@ -560,4 +560,42 @@ export default class YQ {
         }
         return ii;
     }
+
+    /**
+     * 根據 HTML 元素中的 y-if 或 y-show 屬性中的程式碼決定該元素是否應該存在或顯示，應在 DOM 載入完成後使用。
+     *   y-if 或 y-show 中的程式碼必須能夠得出一個布林值，並且只能使用全域性和 vars 輸入的變數
+     *   例如： <div y-if="vars[0] == 233"></div>
+     * @param {string} attrName 元素屬性名稱
+     * @param {HTMLElement} parentDOM 只處理此指定元素中的內容
+     * @param {boolean} showMode 只控制該物件是否顯示，否則條件不成立時該物件會被徹底移除
+     * @param {any[]} 傳入任意變數，供 y-if 屬性中的程式碼使用
+     * @return {number} 已處理的元素數量
+    */
+     static yIfShow(parentDOM = document.body, ...vars: any[]): number {
+        let ii = 0;
+        const attrNameArr = ['y-if', 'y-show'];
+        for (let i = 0; i < 2; i++) {
+            const attrName = attrNameArr[i];
+            const allAttr: HTMLElement[] = YQ.getHasAttribute(attrName, parentDOM);
+            for (const nowDom of allAttr) {
+                const attrInfo: string | null = nowDom.getAttribute(attrName);
+                if (attrInfo == null || attrInfo.length == 0) {
+                    continue;
+                }
+                const isOK: boolean = eval(attrInfo);
+                // YQ.log(`${attrName} 执行 ${attrInfo} 结果为 ${isOK}`, YQ.yqStr);
+                if (i == 1) {
+                    if (isOK) {
+                        YQ.show(nowDom);
+                    } else {
+                        YQ.hide(nowDom);
+                    }
+                } else if (!isOK) {
+                    nowDom.remove();
+                }
+                ii++;
+            }
+        }
+        return ii;
+    }
 }
