@@ -194,14 +194,46 @@ export default class YQ {
      * @param {HTMLElement} obj 要操作的 DOM 物件
      */
     static show(obj: HTMLElement): void {
-        obj.style.display = '';
+        const displayName: string = 'y-display';
+        const nowDisplay: string = obj.style.display;
+        if (nowDisplay.length > 0 && nowDisplay != 'none') {
+            return;
+        }
+        const newStyle = obj.hasAttribute(displayName) ? obj.getAttribute(displayName) as string : 'block';
+        obj.removeAttribute(displayName);
+        if (nowDisplay != newStyle) {
+            obj.style.display = newStyle;
+        }
     }
     /**
      * 立即隱藏
      * @param {HTMLElement} obj 要操作的 DOM 物件
      */
     static hide(obj: HTMLElement): void {
-        obj.style.display = 'none';
+        const displayName: string = 'y-display';
+        const nowDisplay: string = obj.style.display;
+        if (nowDisplay.length > 0 && nowDisplay != 'none') {
+            obj.setAttribute(displayName, nowDisplay);
+        }
+        const newStyle: string = 'none';
+        if (nowDisplay != newStyle) {
+            obj.style.display = newStyle;
+        }
+    }
+    /**
+     * 如果已顯示則隱藏，如果已隱藏則顯示
+     * @param {HTMLElement} obj 要操作的 DOM 物件
+     * @return {boolean} 現在應該是顯示還是隱藏的
+     */
+    static autoShowHide(obj: HTMLElement): boolean {
+        const nowDisplay: string = obj.style.display;
+        const isShow: boolean = (nowDisplay.length > 0 && nowDisplay != 'none');
+        if (isShow) {
+            YQ.hide(obj);
+        } else {
+            YQ.show(obj);
+        }
+        return !isShow;
     }
 
     /**
@@ -305,8 +337,7 @@ export default class YQ {
             fStart = '<template id="' + templateID + '">';
         }
         let templateHTML = YQ.stringNode(templateFileCode, fStart, fEnd);
-        for (let i = 0; i < replaceList.length; i++) {
-            const replaceKV: string[] = replaceList[i];
+        for (const replaceKV of replaceList) {
             const replaceK: string = '{{ ' + replaceKV[0] + ' }}';
             const replaceV: string = replaceKV[1];
             templateHTML = templateHTML.replace(replaceK, replaceV);
@@ -348,7 +379,7 @@ export default class YQ {
     /**
      * 從物件中查詢屬性並返回，並確定每個屬性是否存在，否則提供預設值
      * @param {unknown} obj 要從哪個元素查詢
-     * @param {string} property 屬性路徑 obj1.obj2.obj3
+     * @param {string} property 屬性路徑 'obj1.obj2.obj3'
      * @param {unknown} defaultVal 沒有找到時返回的預設值
      * @param {boolean} showWarn 是否在瀏覽器控制檯顯示找不到物件的資訊
      * @return {boolean} isok 是否有擁有此屬性
@@ -365,8 +396,7 @@ export default class YQ {
         const propertys: string[] = property.split('.');
         let path = 'obj';
         let type = 'undefined';
-        for (let i = 0; i < propertys.length; i++) {
-            const prop = propertys[i];
+        for (const prop of propertys) {
             path = path + '.' + prop;
             type = typeof eval(path);
             if (type == 'undefined') {
