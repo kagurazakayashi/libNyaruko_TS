@@ -318,10 +318,10 @@ export default class YQ {
      * 粗略時間差描述文字
      * @param {number} time 時間戳（預設用秒級）
      * @param {number[]} timeArr 自定義時間分隔
-     * @param {string[]} timeUnitStr 自定義時間分隔文字
+     * @param {string[]} timeUnitStr 自定義時間分隔文字（s結尾複數需要帶上s，輸出時會自動增減）
      * @return {string} 描述文字
      */
-    static timeDiffStr(time: number, timeArr: number[] = [525600, 262080, 43200, 1440, 60], timeUnitStr: string[] = ['年', '半年', '月', '日', '小时', '前']): string {
+    static timeDiffStr(time: number, timeArr: number[] = [525600, 262080, 43200, 1440, 60, 1, 0], timeUnitStr: string[] = ['年', '半年', '月', '日', '小时', '分钟', '刚刚', '前']): string {
         let tTime = 0;
         let tStr = '';
         for (let i = 0; i < timeArr.length; i++) {
@@ -331,8 +331,18 @@ export default class YQ {
                 break;
             }
         }
-        const tf: string[] = tTime.toString().split('.');
-        return tf[0] + '' + tStr + timeUnitStr.pop();
+        if (tTime == Infinity) {
+            tTime = 0;
+        } else {
+            tTime = Math.floor(tTime);
+        }
+        if (tTime == 1 && tStr && tStr.length > 0 && tStr.substr(tStr.length - 1) == 's') {
+            tStr = tStr.substr(0, tStr.length - 1);
+        }
+        if (tTime == 0) {
+            return timeUnitStr[timeUnitStr.length - 2];
+        }
+        return tTime.toString() + ' ' + tStr + timeUnitStr[timeUnitStr.length - 1];
     }
 
     /**
@@ -571,7 +581,7 @@ export default class YQ {
      * @param {any[]} 傳入任意變數，供 y-if 屬性中的程式碼使用
      * @return {number} 已處理的元素數量
     */
-     static yIfShow(parentDOM = document.body, ...vars: any[]): number {
+    static yIfShow(parentDOM = document.body, ...vars: any[]): number {
         let ii = 0;
         const attrNameArr = ['y-if', 'y-show'];
         for (let i = 0; i < 2; i++) {
