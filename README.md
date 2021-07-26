@@ -11,8 +11,46 @@
 通用工具文件，一些跨项目常用的代码会放在里面，全部为 `static` 方法可以直接用。
 
   - 包含了一些名称类似于 JQ 的方法。
-  - 包含一个模板网页载入功能，可专门做一个 html 文件里面包含 `<template id="模板名称">其他网页代码和变量{{ 变量名称 }}</template>` 来进行模板网页的加载。
-  - 其他详见文件内注释。
+  - 功能用法详见文件内注释。
+  - 以下对其中一些较为复杂的功能进行解释：
+
+### 模板功能
+
+`yq.ts` 包含模板网页载入功能，可专门做一个 `html` 文件或 `css` 文件存放一个或多个模板代码。
+
+- HTML 模板演示代码：
+```
+<template id="subtemplate1">
+  <div id="{{ var1 }}">{{ var2 }}</div>
+</template>
+```
+- CSS 模板演示代码
+```
+@-template-subtemplate1 {
+  div {
+    display: {{ var1 }}
+  }
+  #{{ var2 }} {
+    display: none;
+  }
+}
+```
+
+- 使用时：
+1. 用 YQ.get 或 YQ.post 加载该模板，并将这些模板代码存到变量中。
+2. 用 loadTemplateHtml 或 loadTemplateCss 从模板代码变量中加载所需资源。具体参数见注释。
+- 范例：以上方「HTML 模板演示代码」为例：
+```
+YQ.get('index.template.html', undefined, (data: XMLHttpRequest | null, status: number) => {
+    // ...... 一些检查返回结果的代码
+    this.templateHTML = data.responseText;
+}, false);
+// ...... 使用时：
+divs.innerHTML = YQ.loadTemplateHtml(this.templateHTML, 'subtemplate1', [
+    ['var1', 'div1'],
+    ['var2', 'hello'],
+], false);
+```
 
 ## `yqmap.ts`
 
