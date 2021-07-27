@@ -322,13 +322,70 @@ export default class YQ {
     }
 
     /**
-     * 讀入模板網頁
-     * @param {string} templateFileCode 模板檔案內容
-     * @param {string} replaceList [["把哪塊","裡的內容替換成什麼"]]，塊名不能重複
-     * @param {string} templateID 取出模板檔案中的哪個模板ID
-     * @return {string} 从模板生成的 HTML
+ * 取兩個字元之間的內容，這兩個字元有層級配對的關係
+ * 例如： xx{a{}b{}}yy 會取出 a{}b{}
+ * @param {string} str 要處理的字串
+ * @param {string} startChar 開始字元（不要輸入字串）
+ * @param {string} endChar 結束字元（不要輸入字串）
+ * @return {string} 取出的字串
+*/
+    static substrPair(str: string, startChar = '{', endChar = '}'): string {
+        if (str.length < 3) {
+            return '';
+        }
+        let lc: number = -1;
+        let start: number = -1;
+        let sLen: number = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char: string = str.charAt(i);
+            if (lc > 0) {
+                sLen++;
+            }
+            if (char == startChar) {
+                if (lc < 0) {
+                    lc = 0;
+                }
+                lc++;
+                if (start < 0) {
+                    start = i;
+                }
+            } else if (char == endChar) {
+                lc--;
+            }
+            if (lc == 0) {
+                return str.substr(start + 1, sLen - 1);
+            }
+        }
+        return '';
+    }
+
+    /**
+     * 替換字串中的所有指定字串
+     * @param {string} str 要處理的字串
+     * @param {string} searchValue 要查詢的字串
+     * @param {string} replaceValue 要替換成的字串
+     * @return {string} 修改後的字串
      */
-    static loadTemplateHtml(templateFileCode: string, replaceList: string[][], templateID = ''): string {
+    static replaceAll(str: string, searchValue: string, replaceValue: string): string {
+        if (str.length == 0) {
+            return '';
+        }
+        const sa: string[] = str.split(searchValue);
+        if (sa.length <= 1) {
+            return str;
+        }
+        return sa.join(replaceValue);
+    }
+
+    /**
+         * 讀入模板網頁
+         * @param {string} templateFileCode 模板檔案內容（示例见 README.md ）
+         * @param {string} templateID 取出模板檔案中的哪個模板ID
+         * @param {string} replaceList [["把哪塊","裡的內容替換成什麼"]]，塊名不能重複
+         * @param {boolean} replaceAll 是否全部替換（僅在模板裡有同名變數時開啟以免浪費效能）
+         * @return {string} 從模板生成的 HTML
+         */
+    static loadTemplateHtml(templateFileCode: string, templateID: string = '', replaceList: string[][] = [], replaceAll: boolean = false): string {
         let fStart = '';
         const fEnd = '</template>';
         if (templateID.length == 0) {
@@ -340,9 +397,36 @@ export default class YQ {
         for (const replaceKV of replaceList) {
             const replaceK: string = '{{ ' + replaceKV[0] + ' }}';
             const replaceV: string = replaceKV[1];
-            templateHTML = templateHTML.replace(replaceK, replaceV);
+            templateHTML = replaceAll ? YQ.replaceAll(templateHTML, replaceK, replaceV) : templateHTML.replace(replaceK, replaceV);
         }
         return templateHTML;
+    }
+
+    /**
+     * 讀入模板 CSS 樣式
+     * @param {string} templateFileCode 模板檔案內容（示例见 README.md ）
+     * @param {string} templateID 取出模板檔案中的哪個模板ID
+     * @param {string} replaceList [["把哪塊","裡的內容替換成什麼"]]，塊名不能重複
+     * @param {boolean} replaceAll 是否全部替換（僅在模板裡有同名變數時開啟以免浪費效能）
+     * @return {string} 從模板生成的 HTML
+     */
+    static loadTemplateCss(templateFileCode: string, templateID: string = '', replaceList: string[][] = [], replaceAll: boolean = false): string {
+        const tempName = '@-template-' + templateID;
+        let fStart: number = templateFileCode.indexOf(tempName);
+        if (fStart == -1) {
+            return '';
+        }
+        let tempCSS = templateFileCode.substring(fStart);
+        tempCSS = YQ.substrPair(tempCSS);
+        if (tempCSS.length == 0) {
+            return '';
+        }
+        for (const replaceKV of replaceList) {
+            const replaceK: string = '{{ ' + replaceKV[0] + ' }}';
+            const replaceV: string = replaceKV[1];
+            tempCSS = replaceAll ? YQ.replaceAll(tempCSS, replaceK, replaceV) : tempCSS.replace(replaceK, replaceV);
+        }
+        return tempCSS;
     }
 
     /**
