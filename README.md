@@ -52,6 +52,35 @@ divs.innerHTML = YQ.loadTemplateHtml(this.templateHTML, 'subtemplate1', [
 ], false);
 ```
 
+### 动画功能
+
+- 渐变显示出来 `fadeIn` 和 渐变消失 `fadeOut` 的使用示例（具体参数解释见注释）：
+```
+YQ.fadeOut(div1, 1000, () => {
+    div1.remove();
+});
+```
+- 自定义动画 `animate` 的使用示例（具体参数解释见注释）：
+```
+YQ.animate(div1, {
+    opacity: '0',
+    width: '50%'
+}, 1000, () => {
+    console.log('END');
+});
+```
+- 自定义动画序列 `animateList` 的使用示例（具体参数解释见注释）：
+```
+YQ.animateList([
+    // [网页元素,动画字典,动画时长]
+    [div1, { opacity: '0' }, 1000],
+    [div1, { opacity: '1' }, 1000],
+    [div1, { opacity: '0' }, 1000],
+], () => {
+    console.log('END');
+});
+```
+
 ## `yqmap.ts`
 
 在一些低版本客户端环境中，可能无法使用 Map，可以用这个代替。
