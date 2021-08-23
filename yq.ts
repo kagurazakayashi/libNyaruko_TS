@@ -2,6 +2,16 @@
  * 雅詩TS工具類
  * by 神楽坂雅詩
  */
+
+// 包含尺寸和位置的結構體
+export interface YQRect {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+// YQ
 export default class YQ {
     static yqStr = 'YQ';
 
@@ -204,21 +214,23 @@ export default class YQ {
         obj.style.transition = 'all ' + speed.toString() + 'ms';
         YQ.animateCallback(obj, rmTransition, callback);
         for (const key in params) {
-            const val: string = paramsObj[key] as string;
-            eval(`obj.style.${key}='${val}';`);
+            if (params.hasOwnProperty(key)) {
+                const val: string = paramsObj[key] as string;
+                eval(`obj.style.${key}='${val}';`);
+            }
         }
     }
 
     /**
      * 執行自定義動畫序列
-     * @param {(number|HTMLElement|{})[][]} list 動畫序列二維陣列
+     * @param {Array} list 動畫序列二維陣列
      * 每個設定物件包括 [網頁元素,動畫字典,動畫時長] （示例見 README.md ）
-     * @param callback 動畫完成之後的回撥
-     * @param step 每個步驟動畫完成之後的回撥
+     * @param {Function} callback 動畫完成之後的回撥
+     * @param {Function} step 每個步驟動畫完成之後的回撥
      */
     static animateList(list: (number | HTMLElement | {})[][], callback?: () => void, step?: (obj?: HTMLElement, stepi?: number, total?: number) => void): void {
-        let stepi = 0;
-        let total = list.length;
+        const stepi = 0;
+        const total = list.length;
         const listFunc = (aniConf: object[]) => {
             const obj: HTMLElement = aniConf[0] as HTMLElement;
             const params: object = aniConf[1];
@@ -236,7 +248,7 @@ export default class YQ {
             };
             const rmTransition: boolean = (list.length == 1);
             YQ.animate(obj, params, speed, stepCallback, rmTransition);
-        }
+        };
         listFunc(list[0] as object[]);
     }
 
@@ -262,7 +274,7 @@ export default class YQ {
                 if (rmTransition) {
                     obj.style.transition = '';
                 }
-            }
+            };
             for (const listen of listenPfx) {
                 obj.addEventListener(listen, animationend, false);
             }
@@ -292,10 +304,11 @@ export default class YQ {
     static hide(obj: HTMLElement): void {
         const displayName: string = 'y-display';
         const nowDisplay: string = obj.style.display;
-        if (nowDisplay.length > 0 && nowDisplay != 'none') {
+        const none: string = 'none';
+        if (nowDisplay.length > 0 && nowDisplay != none) {
             obj.setAttribute(displayName, nowDisplay);
         }
-        const newStyle: string = 'none';
+        const newStyle: string = none;
         if (nowDisplay != newStyle) {
             obj.style.display = newStyle;
         }
@@ -467,11 +480,12 @@ export default class YQ {
      */
     static loadTemplateHtml(templateFileCode: string, templateID: string = '', replaceList: string[][] = [], replaceAll: boolean = false): string {
         let fStart = '';
-        const fEnd = '</template>';
+        const template: string = 'template';
+        const fEnd = '</' + template + '>';
         if (templateID.length == 0) {
-            fStart = '<template>';
+            fStart = '<' + template + '>';
         } else {
-            fStart = '<template id="' + templateID + '">';
+            fStart = '<' + template + ' id="' + templateID + '">';
         }
         let templateHTML = YQ.stringNode(templateFileCode, fStart, fEnd);
         for (const replaceKV of replaceList) {
@@ -492,7 +506,7 @@ export default class YQ {
      */
     static loadTemplateCss(templateFileCode: string, templateID: string = '', replaceList: string[][] = [], replaceAll: boolean = false): string {
         const tempName = '@-template-' + templateID;
-        let fStart: number = templateFileCode.indexOf(tempName);
+        const fStart: number = templateFileCode.indexOf(tempName);
         if (fStart == -1) {
             return '';
         }
@@ -663,7 +677,7 @@ export default class YQ {
      * @return {object[]} 清理後的物件陣列
     */
     static clearEmpty(obj: object[]): object[] {
-        let newObj: object[] = [];
+        const newObj: object[] = [];
         for (const nowObj of obj) {
             if (nowObj && YQ.count(nowObj) > 0) {
                 newObj.push(nowObj);
@@ -677,12 +691,12 @@ export default class YQ {
      * @param {HTMLElement} parentDOM 要檢查的元素
      * @param {boolean} structure 子元素陣列是否需要具有層次結構
      * @return {HTMLElement[]} 子元素陣列（不帶有層次結構，一維）
-     * @return {HTMLElement[][]} 子元素多維陣列（帶有層次結構，不定維度）
+     * {HTMLElement[][]} 子元素多維陣列（帶有層次結構，不定維度）
     */
     static getChildrens(parentDOM = document.body, structure = false): HTMLElement[] | HTMLElement[][] {
         const clilds: HTMLElement[] = [];
         const getChildrenFunc = (parent: HTMLElement, struct: boolean): HTMLElement[][] => {
-            let childDoms: HTMLElement[] | HTMLElement[][] | HTMLElement[][][] = [];
+            const childDoms: HTMLElement[] | HTMLElement[][] | HTMLElement[][][] = [];
             if (struct) {
                 (childDoms as HTMLElement[]).push(parent);
             } else {
@@ -698,7 +712,7 @@ export default class YQ {
                 }
             }
             return childDoms as HTMLElement[][];
-        }
+        };
         if (structure) {
             return getChildrenFunc(parentDOM, structure);
         } else {
@@ -769,7 +783,6 @@ export default class YQ {
      * 根據 HTML 元素中的 y-if 或 y-show 屬性中的程式碼決定該元素是否應該存在或顯示，應在 DOM 載入完成後使用。
      *   y-if 或 y-show 中的程式碼必須能夠得出一個布林值，並且只能使用全域性和 vars 輸入的變數
      *   例如： <div y-if="vars[0] == 233"></div>
-     * @param {string} attrName 元素屬性名稱
      * @param {HTMLElement} parentDOM 只處理此指定元素中的內容
      * @param {boolean} showMode 只控制該物件是否顯示，否則條件不成立時該物件會被徹底移除
      * @param {any[]} 傳入任意變數，供 y-if 屬性中的程式碼使用
@@ -879,5 +892,82 @@ export default class YQ {
             }
         }
         return '#' + rgbaHex.join('');
+    }
+
+    /**
+     * 計算元素铺满（填充）某个容器所需的位置和尺寸（內容鋪滿螢幕，多出的邊被裁去）
+     * @param {number} width 元素的寬度
+     * @param {number} height 元素的高度
+     * @param {number} boxWidth 容器的寬度
+     * @param {number} boxHeight 容器的高度
+     * @return {YQRect} 需要將元素設定為此位置和尺寸
+     */
+    static sizeFill(width: number, height: number, boxWidth = document.body.clientWidth, boxHeight = document.body.clientHeight): YQRect {
+        console.log(width, height, boxWidth, boxHeight);
+        let x = 0;
+        let y = 0;
+        let w = 0;
+        let h = 0;
+        const wh = width / height;
+        const cw = boxWidth - width;
+        const ch = boxHeight - height;
+        const cwh = cw / ch;
+        if (cw > ch) {
+            w = boxWidth;
+            h = w / wh;
+            y = (boxHeight - h) / 2;
+        } else {
+            h = boxHeight;
+            w = h * wh;
+            x = (boxWidth - w) / 2;
+        }
+        if (wh > 1) {
+            if (cwh > 1.01 && cwh < wh) {
+                if (cw < ch) {
+                    w = boxWidth;
+                    h = w / wh;
+                    y = (boxHeight - h) / 2;
+                    x = 0;
+                } else {
+                    h = boxHeight;
+                    w = h * wh;
+                    x = (boxWidth - w) / 2;
+                    y = 0;
+                }
+            }
+        } else {
+            if (cwh > wh && cwh < 1) {
+                if (cw < ch) {
+                    w = boxWidth;
+                    h = w / wh;
+                    y = (boxHeight - h) / 2;
+                    x = 0;
+                } else {
+                    h = boxHeight;
+                    w = h * wh;
+                    x = (boxWidth - w) / 2;
+                    y = 0;
+                }
+            }
+        }
+        return {
+            x: x,
+            y: y,
+            width: w,
+            height: h,
+        };
+    }
+
+    /**
+     * 將 YQRect 的位置寬高應用到某個物件
+     * @param {HTMLElement} parentDOM 指定元素
+     * @param {YQRect} rect 位置寬高
+     */
+    static setRect(parentDOM: HTMLElement, rect: YQRect) {
+        const px: string = 'px';
+        parentDOM.style.left = rect.x + px;
+        parentDOM.style.top = rect.y + px;
+        parentDOM.style.width = rect.width + px;
+        parentDOM.style.height = rect.height + px;
     }
 }
