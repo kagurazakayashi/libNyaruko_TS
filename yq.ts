@@ -10,6 +10,13 @@ export interface YQRect {
     width: number;
     height: number;
 }
+// 包含顏色數值的結構體
+export interface YQColor {
+    red: number;
+    green: number;
+    blue: number;
+    alpha: number;
+}
 
 // YQ
 export default class YQ {
@@ -818,10 +825,10 @@ export default class YQ {
 
     /**
      * @param {string} hex 16進位制顏色，輸入包括'#'，支援 #RGB, #RRGGBB(推薦), #RRGGBBAA
-     * @return {number[]} 10進位制顏色 RGB / RGBA 陣列
+     * @return {YQColor} 10進位制顏色 RGB / RGBA （沒有 alpha 通道時 alpha 為 -1）
      */
-    static colorHex2Int(hex: string): number[] {
-        const rgbaInt = [0, 0, 0];
+    static colorHex2Int(hex: string): YQColor {
+        const rgbaInt: number[] = [0, 0, 0, -1];
         const cLen = hex.length;
         const s0x = '0x';
         if (cLen == 4 || cLen == 6) {
@@ -829,7 +836,7 @@ export default class YQ {
                 rgbaInt[i] = parseInt(s0x + hex.substr(i + 1, 1));
             }
             if (cLen == 6) {
-                rgbaInt.push(parseInt(s0x + hex.substr(4, 1)));
+                rgbaInt[3] = parseInt(s0x + hex.substr(4, 1));
             }
         } else if (cLen == 7 || cLen == 9) {
             let j: number = 1;
@@ -838,10 +845,15 @@ export default class YQ {
                 j += 2;
             }
             if (cLen == 9) {
-                rgbaInt.push(parseInt(s0x + hex.substr(j, 2)));
+                rgbaInt[3] = parseInt(s0x + hex.substr(j, 2));
             }
         }
-        return rgbaInt;
+        return {
+            red: rgbaInt[0],
+            green: rgbaInt[1],
+            blue: rgbaInt[2],
+            alpha: rgbaInt[3],
+        }
     }
 
     /**
@@ -856,7 +868,11 @@ export default class YQ {
             return '';
         }
         const rgbaHex: string[] = ['', '', ''];
-        const rgbaInt: number[] = YQ.colorHex2Int(hex);
+        const rgbaColor: YQColor = YQ.colorHex2Int(hex);
+        const rgbaInt: number[] = [rgbaColor.red, rgbaColor.green, rgbaColor.blue];
+        if (rgbaColor.alpha >= 0) {
+            rgbaInt.push(rgbaColor.alpha);
+        }
         const rgbaIntLen: number = rgbaInt.length;
         if (holdColor) {
             forI:
