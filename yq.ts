@@ -919,7 +919,6 @@ export default class YQ {
      * @return {YQRect} 需要將元素設定為此位置和尺寸
      */
     static sizeFill(width: number, height: number, boxWidth = document.body.clientWidth, boxHeight = document.body.clientHeight): YQRect {
-        console.log(width, height, boxWidth, boxHeight);
         let x = 0;
         let y = 0;
         let w = 0;
