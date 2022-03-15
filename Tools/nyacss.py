@@ -1,7 +1,6 @@
 #coding: utf-8
 #!/usr/bin/python3
 # 雅詩 CSS 相容性最佳化工具 (PY3)
-# by 神楽坂雅詩
 from io import TextIOWrapper
 import os
 import sys
@@ -85,8 +84,8 @@ def compression(fileline: list[str]) -> list[str]:
 
 
 if len(sys.argv) < 3:
-    print("help: yqcss.py <in.css> <out.css> [-z]")
-    print("or: yqcss.py <cssdir> <outdir> [-z]")
+    print("help: nyacss.py <in.css> <out.css> [-z]")
+    print("or: nyacss.py <cssdir> <outdir> [-z]")
     print("z: compression")
     quit()
 
@@ -98,7 +97,7 @@ if len(sys.argv) == 4 and sys.argv[3] == "-z":
     comp = True
 
 if os.path.isdir(dirpath):
-    print("[YQCSS] Dir: " + dirpath)
+    print("[NyaCSS] Dir: " + dirpath)
     listdir: list[str] = os.listdir(dirpath)
     for fname in listdir:
         fnameArr: list[str] = fname.split('.')
@@ -116,7 +115,7 @@ for i, pathFT in enumerate(fileList):
     zstr: str = ""
     if comp:
         zstr = " (z)"
-    print("[YQCSS] File" + str(i+1) + ": " + fpath + ' -> ' + tpath + zstr)
+    print("[NyaCSS] File" + str(i+1) + ": " + fpath + ' -> ' + tpath + zstr)
 
     f: TextIOWrapper = open(fpath, 'r', encoding='utf-8')
     fileline: list[str] = list()
@@ -158,6 +157,6 @@ for i, pathFT in enumerate(fileList):
     if sizeadd >= 0:
         sizestr = "+" + sizestr
 
-    print("[YQCSS] Line: " + str(oldLength) +
+    print("[NyaCSS] Line: " + str(oldLength) +
           " -> " + str(newLength) + " ( "+linestr+" ), Char: " + str(oldSize) +
           " -> " + str(newSize) + " ( "+sizestr+" )")
