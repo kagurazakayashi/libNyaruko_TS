@@ -1,3 +1,4 @@
+// 位址列引數相關
 import NyaLib from "./main";
 
 export default class NyaArgv extends NyaLib {

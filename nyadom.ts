@@ -1,9 +1,11 @@
+// 網頁元素的各種獲取、處理、查詢、檢查
 import NyaLib from "./main";
 
 export default class NyaDom extends NyaLib {
+    static div = 'div'
     /**
      * 獲取 HTML DOM 物件
-     * @param {string} element 物件描述（'div','.divclass','#divid','[value]'）
+     * @param {string} element 物件描述（NyaDom.div,'.divclass','#divid','[value]'）
      * @param {HTMLElement} parentDOM 要從哪個元素中獲取
      * @return {HTMLElement|HTMLElement[]|null} HTML 物件/物件組/空
      */
@@ -49,17 +51,50 @@ export default class NyaDom extends NyaLib {
     }
 
     /**
-     * 快捷通过 id 获取取 div（假设该 id 一定存在）
-     * @param {string} element div 的 id
-     * @return {HTMLDivElement} div 物件
+     * 透過 id 獲取網頁元素（假設該網頁元素一定存在）
+     * @param {string} id 網頁元素的 id
+     * @return {HTMLElement} 網頁元素物件
      */
-    static divById(element: string): HTMLDivElement {
-        const divdom: HTMLElement | null = document.getElementById(element);
-        if (!divdom) {
-            this.log(element + ' Not Found', this.nyaLibName, -2);
-            return document.createElement('div');
+    static byId(id: string): HTMLElement {
+        const elementDom: HTMLElement | null = document.getElementById(id);
+        if (!elementDom) {
+            this.log(id, this.nyaLibName, -2);
+            return document.createElement(NyaDom.div);
         }
-        return document.getElementById(element) as HTMLDivElement;
+        return document.getElementById(id) as HTMLElement;
+    }
+
+    /**
+     * 透過 class 獲取網頁元素（假設該網頁元素一定存在）
+     * @param {string} className 網頁元素的 class
+     * @return {HTMLElement} 網頁元素物件
+     */
+    static byClassFirst(className: string): HTMLElement {
+        const divdoms: HTMLCollectionOf<Element> = document.getElementsByClassName(className);
+        for (const key in divdoms) {
+            if (Object.prototype.hasOwnProperty.call(divdoms, key)) {
+                return divdoms[key] as HTMLElement;
+            }
+        }
+        this.log(className, this.nyaLibName, -2);
+        return document.createElement(NyaDom.div);
+    }
+
+    /**
+     * 透過 class 獲取網頁元素陣列（假設該網頁元素一定存在）
+     * @param {string} className 網頁元素的 class
+     * @return {HTMLElement} 網頁元素物件
+     */
+    static byClass(className: string): HTMLElement[] {
+        const elementDoms: HTMLCollectionOf<Element> = document.getElementsByClassName(className);
+        const elements:HTMLElement[] = [];
+        for (const key in elementDoms) {
+            if (Object.prototype.hasOwnProperty.call(elementDoms, key)) {
+                const element = elementDoms[key] as HTMLElement;
+                elements.push(element)
+            }
+        }
+        return elements
     }
 
     /**
@@ -129,8 +164,8 @@ export default class NyaDom extends NyaLib {
      * @param {string} dom DOM 字串
      * @return {NodeListOf<ChildNode>} DOM
      */
-     static stringToDOM(dom: string): NodeListOf<ChildNode> {
-        const saveElement: HTMLDivElement = document.createElement('div');
+    static stringToDOM(dom: string): NodeListOf<ChildNode> {
+        const saveElement: HTMLElement = document.createElement(NyaDom.div);
         saveElement.innerHTML = dom;
         return saveElement.childNodes;
     }
@@ -141,7 +176,7 @@ export default class NyaDom extends NyaLib {
      * @return {string} HTML 字串
      */
     static domToString(node: globalThis.Node): string {
-        const saveElement: HTMLDivElement = document.createElement('div');
+        const saveElement: HTMLElement = document.createElement(NyaDom.div);
         saveElement.appendChild(node);
         return saveElement.innerHTML;
     }
@@ -157,7 +192,7 @@ export default class NyaDom extends NyaLib {
      * @return {string} type 物件型別
      * @return {unknown} obj 找到的屬性物件或預設值
     */
-     static getProperty(obj: unknown, property: string, defaultVal: unknown = null, showWarn = false): {
+    static getProperty(obj: unknown, property: string, defaultVal: unknown = null, showWarn = false): {
         isok: boolean;
         path: string;
         type: string;
@@ -171,7 +206,7 @@ export default class NyaDom extends NyaLib {
             type = typeof eval(path);
             if (type == 'undefined') {
                 if (showWarn) {
-                    console.warn('Cannot read property "' + path + '"');
+                    this.log(path, this.nyaLibName, -1);
                 }
                 return {
                     isok: false,
@@ -209,7 +244,7 @@ export default class NyaDom extends NyaLib {
      * @param {object} obj 要檢查的物件 [] 或 {}
      * @return {number} 物件的長度
     */
-     static count(obj: object): number {
+    static count(obj: object): number {
         const objKeys: Array<any> = Object.keys(obj);
         return objKeys.length;
     }
@@ -219,7 +254,7 @@ export default class NyaDom extends NyaLib {
      * @param {object[]} obj 要檢查的物件陣列
      * @return {object[]} 清理後的物件陣列
     */
-     static clearEmpty(obj: object[]): object[] {
+    static clearEmpty(obj: object[]): object[] {
         const newObj: object[] = [];
         for (const nowObj of obj) {
             if (nowObj && this.count(nowObj) > 0) {

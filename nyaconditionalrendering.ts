@@ -1,3 +1,4 @@
+// 處理嵌入到網頁元素屬性中的指令
 import NyaLib from "./main";
 import NyaDom from "./nyadom";
 import NyaVisible from "./nyavisible"

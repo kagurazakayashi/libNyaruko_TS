@@ -1,3 +1,4 @@
+// 每個模組都會用到的函式
 export default class NyaLib {
     static nyaLibName = 'NyaLib';
     /**

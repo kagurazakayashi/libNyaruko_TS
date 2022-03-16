@@ -1,8 +1,5 @@
-/**
- * 雅詩TS工具類
- * 在 map 不可用的環境下代替 map 的工作
- */
- export default class NyaMap {
+// 在 map 不可用的環境下代替 map 的工作
+export default class NyaMap {
     items: any = {};
     /**
      * 設定字典值

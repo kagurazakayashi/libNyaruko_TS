@@ -1,3 +1,4 @@
+// 計算相關
 import NyaLib from "./main";
 
 // 包含尺寸和位置的結構體

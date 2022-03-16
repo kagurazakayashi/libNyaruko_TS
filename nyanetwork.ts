@@ -1,3 +1,4 @@
+// 網路請求和返回資訊處理
 import NyaLib from "./main";
 
 export default class NyaNetwork extends NyaLib {
