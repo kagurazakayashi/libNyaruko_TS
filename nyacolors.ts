@@ -10,6 +10,7 @@ export interface NyaColor {
 
 export default class NyaColors extends NyaLib {
     /**
+     * 16進位制顏色轉換為 NyaColor
      * @param {string} hex 16進位制顏色，輸入包括'#'，支援 #RGB, #RRGGBB(推薦), #RRGGBBAA
      * @return {NyaColor} 10進位制顏色 RGB / RGBA （沒有 alpha 通道時 alpha 為 -1）
      */

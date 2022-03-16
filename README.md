@@ -92,3 +92,7 @@ NyaAnimation.animateList([
 在写 CSS 时不必写一堆 `-` 开头的兼容性代码，可以将这个脚本放在编译前的批处理中（例如 `package.json` 的 `scripts` 中）来自动添加。
 
 - 使用 : `python3 nyacss.py 源文件路径.css 处理后文件路径.css`
+
+# 详细使用帮助
+
+参考 [Wiki](wiki) ，在 Wiki 右侧的 Pages 点相关文件名即可了解。

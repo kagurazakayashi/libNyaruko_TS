@@ -1,0 +1,7 @@
+._*
+.DS_Store
+Thumbs.db
+# 不需要 NPM
+package.json
+package-lock.json
+node_modules
