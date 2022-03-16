@@ -1,3 +1,4 @@
+// 動畫相關
 import NyaLib from "./main";
 
 export default class NyaAnimation extends NyaLib {

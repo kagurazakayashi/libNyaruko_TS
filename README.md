@@ -12,6 +12,8 @@
   - 动画相关
 - `nyaargv.ts`
   - 地址栏参数相关
+- `nyaas.ts`
+  - 类型强制转换相关
 - `nyacalc.ts`
   - 计算相关
 - `nyacolors.ts`
