@@ -22,11 +22,11 @@ def keyframes(fileline: list[str]) -> list[str]:
         if working:
             nowline.append(line)
             for char in line:
-                if char == '{':
+                if char == "{":
                     if lc < 0:
                         lc = 0
                     lc += 1
-                elif char == '}':
+                elif char == "}":
                     lc -= 1
                 if lc == 0:
                     lc = -1
@@ -84,11 +84,12 @@ def compression(fileline: list[str]) -> list[str]:
 
 
 if len(sys.argv) < 3:
-    print("help: nyacss.py <in.css> <out.css> [-z]")
-    print("or: nyacss.py <cssdir> <outdir> [-z]")
+    print("help: " + sys.argv[0] + " <in.css> <out.css> [-z]")
+    print("or: " + sys.argv[0] + " <cssdir> <outdir> [-z]")
     print("z: compression")
     quit()
 
+pyname: str = "["+sys.argv[0]+"] "
 fileList: list[str] = []
 dirpath: str = sys.argv[1]
 dirpathTo: str = sys.argv[2]
@@ -97,10 +98,10 @@ if len(sys.argv) == 4 and sys.argv[3] == "-z":
     comp = True
 
 if os.path.isdir(dirpath):
-    print("[NyaCSS] Dir: " + dirpath)
+    print(pyname + "Dir: " + dirpath)
     listdir: list[str] = os.listdir(dirpath)
     for fname in listdir:
-        fnameArr: list[str] = fname.split('.')
+        fnameArr: list[str] = fname.split(".")
         extName: str = fnameArr[-1]
         if extName == "css" and os.path.isdir(fname) == False:
             pathFT: list[str] = [os.path.join(
@@ -115,9 +116,9 @@ for i, pathFT in enumerate(fileList):
     zstr: str = ""
     if comp:
         zstr = " (z)"
-    print("[NyaCSS] File" + str(i+1) + ": " + fpath + ' -> ' + tpath + zstr)
+    print(pyname + "File" + str(i+1) + ": " + fpath + " -> " + tpath + zstr)
 
-    f: TextIOWrapper = open(fpath, 'r', encoding='utf-8')
+    f: TextIOWrapper = open(fpath, "r", encoding="utf-8")
     fileline: list[str] = list()
     oldLength: int = 0
     oldSize: int = 0
@@ -133,14 +134,14 @@ for i, pathFT in enumerate(fileList):
     if comp:
         fileline = compression(fileline)
 
-    fullfile: str = ''
+    fullfile: str = ""
     for line in fileline:
         if comp:
             fullfile += line
         else:
             fullfile += line.replace("\r", "").replace("\n", "") + "\n"
 
-    fw: TextIOWrapper = open(tpath, 'w')
+    fw: TextIOWrapper = open(tpath, "w")
     fw.write(fullfile)
     fw.close()
 
@@ -157,6 +158,6 @@ for i, pathFT in enumerate(fileList):
     if sizeadd >= 0:
         sizestr = "+" + sizestr
 
-    print("[NyaCSS] Line: " + str(oldLength) +
+    print(pyname + "Line: " + str(oldLength) +
           " -> " + str(newLength) + " ( "+linestr+" ), Char: " + str(oldSize) +
           " -> " + str(newSize) + " ( "+sizestr+" )")

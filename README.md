@@ -42,6 +42,26 @@
   - 即可使用 `NyaDom.dom('div1');`
 2. 具体使用方式见 Wiki 或源码中每个函数的注释。
 
+## 工具脚本
+
+这些脚本要求系统中已安装有 `python3`
+
+### `nyacss.py`
+
+在写 CSS 时不必写一堆 `-` 开头的兼容性代码，可以将这个脚本放在编译前的批处理中（例如 `package.json` 的 `scripts` 中）来自动添加。
+
+- 使用 : `python3 nyacss.py 源文件路径.css 处理后文件路径.css -z`
+  - `-z`: 可选参数，加入后表示压缩 CSS 。
+
+### `nyaincssjs.py`
+
+将 HTML 中引用的 CSS 和 JS 嵌入到 HTML 中，用于生成单文件网页用。
+
+- 使用 : `python3 nyaincssjs.py 源文件路径.html 处理后文件路径.html`
+  - `源文件路径.html`: 可选参数，默认为 `index.html` 。
+  - `处理后文件路径.html`: 可选参数，默认为 `源文件路径.html`，即覆盖源文件。
+- 建议先将 HTML CSS JS 分别压缩后再使用本脚本合成。
+
 ## 详细使用帮助
 参考 [Wiki](https://github.com/kagurazakayashi/libNyaruko_TS/wiki) ，在 Wiki 右侧的 Pages 点相关文件名即可了解。
 
@@ -113,12 +133,6 @@ NyaAnimation.animateList([
     console.log('END');
 });
 ```
-
-### `nyacss.py`
-
-在写 CSS 时不必写一堆 `-` 开头的兼容性代码，可以将这个脚本放在编译前的批处理中（例如 `package.json` 的 `scripts` 中）来自动添加。
-
-- 使用 : `python3 nyacss.py 源文件路径.css 处理后文件路径.css`
 
 ## LICENSE
 - [木兰宽松许可证， 第2版](http://license.coscl.org.cn/MulanPSL2)
