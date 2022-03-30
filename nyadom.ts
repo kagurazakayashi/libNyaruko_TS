@@ -87,7 +87,7 @@ export default class NyaDom extends NyaLib {
      */
     static byClass(className: string): HTMLElement[] {
         const elementDoms: HTMLCollectionOf<Element> = document.getElementsByClassName(className);
-        const elements:HTMLElement[] = [];
+        const elements: HTMLElement[] = [];
         for (const key in elementDoms) {
             if (Object.prototype.hasOwnProperty.call(elementDoms, key)) {
                 const element = elementDoms[key] as HTMLElement;
@@ -237,6 +237,56 @@ export default class NyaDom extends NyaLib {
     static getProp(obj: unknown, property: string, defaultVal: unknown = null, showWarn = true): unknown {
         const prop: { isok: boolean; path: string; type: string; obj: unknown; } = this.getProperty(obj, property, defaultVal, showWarn);
         return prop.obj;
+    }
+
+    /**
+     * 新增/修改/刪除 <meta> 資訊
+     * @param {string} name meta 標籤的 name
+     * @param {string} content meta 標籤的 content 值，留空為刪除
+     * @return {number} 處理結果： 0刪除 1新增 2修改
+     */
+    static metaSet(name: string, content?: string): number {
+        const isDelete: boolean = (content == null || content.length == 0);
+        const head: HTMLHeadElement = document.head;
+        const metaStr: string = 'meta';
+        const metas: HTMLCollectionOf<Element> = head.getElementsByTagName(metaStr);
+        for (const key in metas) {
+            if (Object.prototype.hasOwnProperty.call(metas, key)) {
+                const meta: HTMLMetaElement = metas[key] as HTMLMetaElement;
+                if (meta.getAttribute('name') === name) {
+                    if (isDelete) {
+                        meta.remove();
+                        return 0;
+                    } else {
+                        meta.content = content!;
+                        return 2;
+                    }
+                }
+            }
+        }
+        const meta: HTMLMetaElement = document.createElement(metaStr) as HTMLMetaElement;
+        meta.name = name;
+        meta.content = content!;
+        head.appendChild(meta);
+        return 1;
+    }
+
+    /**
+     * 獲取 <meta> 資訊
+     * @param {string} name meta 標籤的 name
+     * @return {string} meta 標籤的 content 值
+     */
+    static metaGet(name: string): string {
+        const metas: HTMLCollectionOf<HTMLMetaElement> = document.getElementsByTagName('meta');
+        for (const key in metas) {
+            if (Object.prototype.hasOwnProperty.call(metas, key)) {
+                const meta: HTMLMetaElement = metas[key] as HTMLMetaElement;
+                if (meta.getAttribute('name') === name) {
+                    return meta.getAttribute('content') ?? '';
+                }
+            }
+        }
+        return '';
     }
 
     /**
