@@ -1,6 +1,7 @@
 #coding: utf-8
 #!/usr/bin/python3
 # 雅詩 CSS 相容性最佳化工具 (PY3)
+# https://github.com/kagurazakayashi/libNyaruko_TS
 from io import TextIOWrapper
 import os
 import sys
@@ -118,7 +119,7 @@ for i, pathFT in enumerate(fileList):
         zstr = " (z)"
     print(pyname + "File" + str(i+1) + ": " + fpath + " -> " + tpath + zstr)
 
-    f: TextIOWrapper = open(fpath, "r", encoding="utf-8")
+    f: TextIOWrapper = open(fpath, "r", encoding="utf-8", newline="\n")
     fileline: list[str] = list()
     oldLength: int = 0
     oldSize: int = 0
@@ -136,12 +137,13 @@ for i, pathFT in enumerate(fileList):
 
     fullfile: str = ""
     for line in fileline:
+        line = line.replace("\r", "").replace("\n", "")
         if comp:
             fullfile += line
         else:
-            fullfile += line.replace("\r", "").replace("\n", "") + "\n"
+            fullfile += line + "\n"
 
-    fw: TextIOWrapper = open(tpath, "w")
+    fw: TextIOWrapper = open(tpath, "w", encoding="utf-8", newline="\n")
     fw.write(fullfile)
     fw.close()
 

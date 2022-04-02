@@ -1,4 +1,5 @@
 cd ..
+rm -rf wiki
 mkdir wiki
 for file in `ls *.ts`
 do

@@ -1,6 +1,7 @@
 #coding: utf-8
 #!/usr/bin/python3
 # 雅詩 CSS JS 程式碼嵌入器 (PY3)
+# https://github.com/kagurazakayashi/libNyaruko_TS
 import sys
 
 
@@ -8,19 +9,19 @@ def loadfiletext(filename: str) -> str:
     linei = 0
     line = ""
     lines = ""
-    f = open(filename, "r", encoding="UTF-8")
+    f = open(filename, "r", encoding="UTF-8", newline="\n")
     try:
         line = f.readline()
         lines = line
     except Exception as e:
-        print(pyname,"Read line 0 ERR: "+e)
+        print(pyname,filename,":line 00 ERROR: ",e)
     while line:
         linei+=1
         try:
             line = f.readline()
             lines += line
         except Exception as e:
-            print(pyname,"Read line "+str(linei)+" ERR: "+e)
+            print(pyname,filename,":line "+str(linei)+" ERROR: ",e)
     f.close()
     return lines
 
@@ -67,7 +68,7 @@ html: str = loadfiletext(htmlfile)
 print(pyname, "Loaded: " + htmlfile + " (" + str(len(html)) + ")")
 html = convert(html)
 print(pyname, "Writing: " + newhtmlfile)
-fw = open(newhtmlfile, "w", encoding="UTF-8")
+fw = open(newhtmlfile, "w", encoding="UTF-8", newline="\n")
 fw.write(html)
 fw.close()
 print(pyname, "Write complete: " + newhtmlfile + " (" + str(len(html)) + ")")

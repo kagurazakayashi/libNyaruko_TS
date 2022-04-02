@@ -1,6 +1,6 @@
 #coding: utf-8
 #!/usr/bin/python3
-# Wiki 生成器
+# 雅詩 Wiki 生成器 (PY3)
 
 import sys
 import opencc
@@ -8,7 +8,7 @@ import opencc
 if len(sys.argv) <= 1:
     exit(1)
 
-f = open(sys.argv[1], 'r', encoding="utf-8")
+f = open(sys.argv[1], 'r', encoding="utf-8", newline="\n")
 result = list()
 mode = -1
 tmpStr = ""
