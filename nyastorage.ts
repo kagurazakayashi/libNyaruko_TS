@@ -1,6 +1,6 @@
+// 本地儲存控制器
 import NyaLib from "./main";
 
-// 本地存储控制器
 export default class NyaStorage extends NyaLib {
     /**
      * 儲存一個字串

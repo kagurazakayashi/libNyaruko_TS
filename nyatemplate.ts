@@ -1,4 +1,5 @@
-// 模板網頁載入功能，可專門做一個 `html` 檔案或 `css` 檔案存放一個或多個模板程式碼。
+// HTML/CSS 模板載入功能
+// 可專門做一個 `html` 檔案或 `css` 檔案存放一個或多個模板程式碼。
 import NyaLib from "./main";
 import NyaStrings from "./nyastrings";
 

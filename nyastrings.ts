@@ -1,4 +1,4 @@
-// 字串相關處理，包含一些特定字串的提取、生成等功能。
+// 字串相關處理，提取、生成等
 import NyaLib from "./main"
 
 export default class NyaStrings extends NyaLib {

@@ -1,3 +1,4 @@
+// 顯示/隱藏元素
 import NyaLib from "./main";
 
 export default class NyaVisible extends NyaLib {
