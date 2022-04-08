@@ -40,7 +40,7 @@
 1. 导入所需要功能所在的文件即可。例如：
   - 导入 `import NyaDom from "libNyaruko_TS/nyadom";`
   - 即可使用 `NyaDom.dom('div1');`
-2. 具体使用方式见 Wiki 或源码中每个函数的注释。
+2. 具体使用方式见 [Wiki](https://github.com/kagurazakayashi/libNyaruko_TS/wiki) 或源码中每个函数的注释。
 
 ## 工具脚本
 
@@ -63,7 +63,8 @@
 - 建议先将 HTML CSS JS 分别压缩后再使用本脚本合成。
 
 ## 详细使用帮助
-参考 [Wiki](https://github.com/kagurazakayashi/libNyaruko_TS/wiki) ，在 Wiki 右侧的 Pages 点相关文件名即可了解。
+- 参考 [Wiki](https://github.com/kagurazakayashi/libNyaruko_TS/wiki) ，在 Wiki 右侧的 Pages 点相关文件名即可了解。
+  - 可以执行 `python3 Tools/nyawiki.py . wiki` 生成 wiki 。
 
 ## 以下对其中一些较为复杂的功能进行单独解释：
 

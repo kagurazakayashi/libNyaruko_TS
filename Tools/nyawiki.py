@@ -54,7 +54,7 @@ def genMD(fromFile: str, toFile: str):
         if mode > 0 and "*/" in line:
             mode = 3
     f.close()
-    newFileStr: str = "\n".join(newFile) + "\n\n[返回目录 INDEX](Home.md)\n"
+    newFileStr: str = "\n".join(newFile) + "\n\n[返回目录 INDEX](Home)\n"
     fw = open(toFile, "w", encoding="utf-8", newline="\n")
     fw.write(newFileStr)
     fw.close()
@@ -100,7 +100,7 @@ for i in range(len(infoFile)):
     needSpaceInfo: int = infoInfoMax - len(info)
     if needSpaceInfo > 0:
         info += " " * needSpaceInfo
-    lines.append("| [" + file + "](" + file.replace("ts", "md") +
+    lines.append("| [" + file + "](" + file.replace(".ts", "") +
                  ")" + " "*(needSpaceFile+1) + "| " + info + " |")
 toDir += "/Home.md"
 print(pyname, " -> ", toDir)
