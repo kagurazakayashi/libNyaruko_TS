@@ -1,5 +1,5 @@
 // 本地儲存控制器
-import NyaLib from "./main";
+import NyaLib from './main';
 
 export default class NyaStorage extends NyaLib {
     /**
@@ -18,7 +18,7 @@ export default class NyaStorage extends NyaLib {
      * @return {string} 字串
      */
     static getString(key: string, persistent = false): string {
-        return this.getStorage(persistent).getItem(key);
+        return this.getStorage(persistent).getItem(key) ?? '';
     }
 
     /**
@@ -37,8 +37,8 @@ export default class NyaStorage extends NyaLib {
      * @return {number|null} 整數
      */
     static getInt(key: string, persistent = false): number | null {
-        const sval: string = this.getStorage(persistent).getItem(key);
-        if (sval.length == 0) return null;
+        const sval: string | null = this.getStorage(persistent).getItem(key);
+        if (!sval || sval.length == 0) return null;
         return parseInt(sval);
     }
     /**
@@ -48,8 +48,8 @@ export default class NyaStorage extends NyaLib {
      * @return {number} 浮點數
      */
     static getFloat(key: string, persistent = false): number | null {
-        const sval: string = this.getStorage(persistent).getItem(key);
-        if (sval.length == 0) return null;
+        const sval: string | null = this.getStorage(persistent).getItem(key);
+        if (!sval || sval.length == 0) return null;
         return parseFloat(sval);
     }
 
@@ -73,7 +73,7 @@ export default class NyaStorage extends NyaLib {
      * @return {boolean} 布林值
      */
     static getBoolean(key: string, persistent = false): boolean | null {
-        const sval: string = this.getStorage(persistent).getItem(key);
+        const sval: string | null = this.getStorage(persistent).getItem(key);
         if (sval == '0') {
             return false;
         } else if (sval == '1') {
@@ -99,8 +99,8 @@ export default class NyaStorage extends NyaLib {
      * @return {any} 陣列/字典
      */
     static getArray(key: string, persistent = false): any {
-        const sval: string = this.getStorage(persistent).getItem(key);
-        if (sval.length == 0) return null;
+        const sval: string | null = this.getStorage(persistent).getItem(key);
+        if (!sval || sval.length == 0) return null;
         return JSON.parse(sval);
     }
 
@@ -111,8 +111,8 @@ export default class NyaStorage extends NyaLib {
      * @return {string[]} 字串陣列
      */
     static getStringArray(key: string, persistent = false): string[] | null {
-        const sval: string = this.getStorage(persistent).getItem(key);
-        if (sval.length == 0) return null;
+        const sval: string | null = this.getStorage(persistent).getItem(key);
+        if (!sval || sval.length == 0) return null;
         return JSON.parse(sval) as string[];
     }
     /**
@@ -122,8 +122,8 @@ export default class NyaStorage extends NyaLib {
      * @return {number[]} 數字陣列
      */
     static getNumberArray(key: string, persistent = false): number[] | null {
-        const sval: string = this.getStorage(persistent).getItem(key);
-        if (sval.length == 0) return null;
+        const sval: string | null = this.getStorage(persistent).getItem(key);
+        if (!sval || sval.length == 0) return null;
         return JSON.parse(sval) as number[];
     }
     /**
@@ -133,8 +133,8 @@ export default class NyaStorage extends NyaLib {
      * @return {boolean[]} 布林值陣列
      */
     static getBooleanArray(key: string, persistent = false): boolean[] | null {
-        const sval: string = this.getStorage(persistent).getItem(key);
-        if (sval.length == 0) return null;
+        const sval: string | null = this.getStorage(persistent).getItem(key);
+        if (!sval || sval.length == 0) return null;
         return JSON.parse(sval) as boolean[];
     }
 
@@ -146,7 +146,7 @@ export default class NyaStorage extends NyaLib {
      */
     static getLength(key?: string, persistent = false): number {
         if (key) {
-            return this.getStorage(persistent).getItem(key).length;
+            return (this.getStorage(persistent).getItem(key) ?? '').length;
         } else {
             return this.getStorage(persistent).length;
         }
@@ -164,18 +164,19 @@ export default class NyaStorage extends NyaLib {
         const storage: Storage = this.getStorage(persistent);
         for (const item in storage) {
             if (storage.hasOwnProperty(item)) {
-                size += storage.getItem(item).length;
+                size += (storage.getItem(item) ?? '').length;
             }
         }
-        if (unit == 1) {
-            return size / 1024;
-        } else if (unit == 2) {
-            return size / 1024 / 1024; //toFixed(2);
-        } else if (unit < 0) {
-            return unit * (-1) - size;
-        } else {
-            return size
+        if (unit) {
+            if (unit == 1) {
+                return size / 1024;
+            } else if (unit == 2) {
+                return size / 1024 / 1024; //toFixed(2);
+            } else if (unit < 0) {
+                return unit * -1 - size;
+            }
         }
+        return size;
     }
 
     /**
@@ -188,7 +189,7 @@ export default class NyaStorage extends NyaLib {
         let size: number = 0;
         const storage: Storage = this.getStorage(persistent);
         storage.removeItem(testKey);
-        for (let i = 0, data = "t"; i < 40; i++) {
+        for (let i = 0, data = 't'; i < 40; i++) {
             try {
                 storage.setItem(testKey, data);
                 data = data + data;
