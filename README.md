@@ -91,19 +91,27 @@
 ```
 
 - 使用时：
-1. 用 `NyaNetwork.get` 或 `NyaNetwork.post` 加载该模板，并将这些模板代码存到变量中。
-2. 用 `NyaTemplate.loadTemplateHtml` 或 `NyaTemplate.loadTemplateCss` 从模板代码变量中加载所需资源。具体参数见注释。
+1. 用 `NyaTemplate.loadTemplate` 进行模板的初次载入。在载入（并部署到指定位置）完成后，可以通过回调函数得到一个 `NyaTemplateElement` 对象。
+2. 如果后续还需使用这个模板文件里的内容，使用上一步得到的 `NyaTemplateElement` 对象的 `loadTo` 函数，将内容部署到指定位置而无需重新下载。
 - 范例：以上方「HTML 模板演示代码」为例：
 ```
-NyaNetwork.get('index.template.html', undefined, (data: XMLHttpRequest | null, status: number) => {
-    // ...... 一些检查返回结果的代码
-    this.templateHTML = data.responseText;
-}, false);
-// ...... 使用时：
-divs.innerHTML = NyaTemplate.loadTemplateHtml(this.templateHTML, 'subtemplate1', [
-    ['var1', 'div1'],
-    ['var2', 'hello'],
-], false);
+// 第一次使用时（需要从网络异步下载）：
+const template:NyaTemplateElement = NyaTemplate.loadTemplate('index.template.html', NyaDom.byId('testDiv1'), (templateElement: NyaTemplateElement) => {
+    // 检查是否成功
+    if (templateElement.status < 1) {
+        return;
+    }
+    // 内容部署完成之后要运行的其他代码
+});
+// 再次使用时（此处还演示了可选参数 NyaTemplateConfig 的使用）：
+template.loadTo(NyaDom.byId('testDiv2'),{
+    templateID: 'subtemplate1',
+    replaceList: [
+        ['var1', 'div1'],
+        ['var2', 'hello'],
+    ],
+    replaceAll: false
+});
 ```
 
 ### 动画功能
