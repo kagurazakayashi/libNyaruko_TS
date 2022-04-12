@@ -1,7 +1,9 @@
 ._*
 .DS_Store
 Thumbs.db
-wiki
+wiki/nya*
+wiki/Home.md
+wiki/main.md
 # 不需要 NPM
 package.json
 package-lock.json
