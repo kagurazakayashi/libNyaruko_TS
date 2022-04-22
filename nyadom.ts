@@ -1,15 +1,16 @@
 // 網頁元素的各種獲取、處理、查詢、檢查
-import NyaLib from "./main";
+import NyaLib from './main';
 
 export default class NyaDom extends NyaLib {
-    static div = 'div'
+    static div = 'div';
     /**
      * 獲取 HTML DOM 物件
      * @param {string} element 物件描述（NyaDom.div,'.divclass','#divid','[value]'）
-     * @param {HTMLElement} parentDOM 要從哪個元素中獲取
+     * @param {HTMLElement} parentDOM 要從哪個元素中獲取（若獲取目標是 ID 則無效）
+     * @param {boolean} classOnlyFirst 如果是類，只獲取第一項
      * @return {HTMLElement|HTMLElement[]|null} HTML 物件/物件組/空
      */
-    static dom(element: string, parentDOM = document.body): HTMLElement | HTMLElement[] | null {
+    static dom(element: string, parentDOM = document.body, classOnlyFirst = false): HTMLElement | HTMLElement[] | null {
         if (element.length == 0) {
             return null;
         }
@@ -23,7 +24,11 @@ export default class NyaDom extends NyaLib {
             if (elements.length == 0) {
                 return null;
             }
-            return Array.prototype.slice.call(elements);
+            const elementsArr = Array.prototype.slice.call(elements);
+            if (classOnlyFirst) {
+                return elementsArr[0];
+            }
+            return elementsArr; // Array
         } else if (mode == '#') {
             element = element.substr(1);
             if (element.length == 0) {
@@ -39,15 +44,57 @@ export default class NyaDom extends NyaLib {
             if (elements.length == 0) {
                 return null;
             }
-            return elements;
+            return elements; // HTMLElement[]
         } else if ((mode >= 'a' && mode <= 'z') || (mode >= 'A' && mode <= 'Z')) {
             const elements: HTMLCollectionOf<Element> = document.getElementsByTagName(element);
             if (elements.length == 0) {
                 return null;
             }
-            return Array.prototype.slice.call(elements);
+            const elementsArr = Array.prototype.slice.call(elements);
+            if (classOnlyFirst) {
+                return elementsArr[0];
+            }
+            return elementsArr; // Array
         }
         return null;
+    }
+
+    /**
+     * 獲取多層的 HTML DOM 物件
+     * @param {string} element 物件描述（'.infoBox .info .title #text'））
+     * @param {boolean} classOnlyFirst 如果是類，只獲取第一項
+     * @return {HTMLElement|HTMLElement[]|null} HTML 物件/物件組/空
+     */
+    static doms(element: string): HTMLElement | HTMLElement[] | null {
+        let elements: HTMLElement[] = [];
+        const elementStrs: string[] = element.split(' ');
+        const htmleleFunc = (htmlele: HTMLElement | HTMLElement[] | null) => {
+            if (htmlele == null) {
+                // continue;
+            } else if ((htmlele as HTMLElement[]).length != undefined) {
+                elements = htmlele as HTMLElement[];
+            } else {
+                elements = [htmlele as HTMLElement];
+            }
+        };
+        elementStrs.forEach((elstr) => {
+            if (elements.length == 0) {
+                let htmlele: HTMLElement | HTMLElement[] | null = this.dom(elstr);
+                htmleleFunc(htmlele);
+            }
+            elements.forEach((ele) => {
+                let htmlele: HTMLElement | HTMLElement[] | null = this.dom(elstr, ele);
+                htmleleFunc(htmlele);
+            });
+        });
+        console.log(elements);
+        if (elements == null || elements.length == 0) {
+            return null;
+        } else if (elements.length == 1) {
+            return elements[0];
+        } else {
+            return elements;
+        }
     }
 
     /**
@@ -58,7 +105,7 @@ export default class NyaDom extends NyaLib {
     static byId(id: string): HTMLElement {
         const elementDom: HTMLElement | null = document.getElementById(id);
         if (!elementDom) {
-            this.log(id, this.nyaLibName, -2);
+            this.log('NO ID ' + id, this.nyaLibName, -2);
             return document.createElement(NyaDom.div);
         }
         return document.getElementById(id) as HTMLElement;
@@ -76,7 +123,7 @@ export default class NyaDom extends NyaLib {
                 return divdoms[key] as HTMLElement;
             }
         }
-        this.log(className, this.nyaLibName, -2);
+        this.log('NO CLASS ' + className, this.nyaLibName, -2);
         return document.createElement(NyaDom.div);
     }
 
@@ -91,10 +138,10 @@ export default class NyaDom extends NyaLib {
         for (const key in elementDoms) {
             if (Object.prototype.hasOwnProperty.call(elementDoms, key)) {
                 const element = elementDoms[key] as HTMLElement;
-                elements.push(element)
+                elements.push(element);
             }
         }
-        return elements
+        return elements;
     }
 
     /**
@@ -102,7 +149,7 @@ export default class NyaDom extends NyaLib {
      * @param {boolean} attributeName 需要包含的屬性
      * @param {HTMLElement} parentDOM 要檢查的元素
      * @return {HTMLElement[]} 包含該屬性的元素列表
-    */
+     */
     static getHasAttribute(attributeName: string, parentDOM = document.body): HTMLElement[] {
         const childrens: HTMLElement[] = this.getChildrens(parentDOM, false) as HTMLElement[];
         const childOK: HTMLElement[] = [];
@@ -120,7 +167,7 @@ export default class NyaDom extends NyaLib {
      * @param {boolean} structure 子元素陣列是否需要具有層次結構
      * @return {HTMLElement[]} 子元素陣列（不帶有層次結構，一維）
      * {HTMLElement[][]} 子元素多維陣列（帶有層次結構，不定維度）
-    */
+     */
     static getChildrens(parentDOM = document.body, structure = false): HTMLElement[] | HTMLElement[][] {
         const clilds: HTMLElement[] = [];
         const getChildrenFunc = (parent: HTMLElement, struct: boolean): HTMLElement[][] => {
@@ -191,8 +238,13 @@ export default class NyaDom extends NyaLib {
      * @return {string} path 物件路徑
      * @return {string} type 物件型別
      * @return {unknown} obj 找到的屬性物件或預設值
-    */
-    static getProperty(obj: unknown, property: string, defaultVal: unknown = null, showWarn = false): {
+     */
+    static getProperty(
+        obj: unknown,
+        property: string,
+        defaultVal: unknown = null,
+        showWarn = false
+    ): {
         isok: boolean;
         path: string;
         type: string;
@@ -233,9 +285,9 @@ export default class NyaDom extends NyaLib {
      * @param {unknown} defaultVal 沒有找到時返回的預設值
      * @param {boolean} showWarn 是否在瀏覽器控制檯顯示找不到物件的資訊
      * @return {any} 找到的屬性物件或預設值
-    */
+     */
     static getProp(obj: unknown, property: string, defaultVal: unknown = null, showWarn = true): unknown {
-        const prop: { isok: boolean; path: string; type: string; obj: unknown; } = this.getProperty(obj, property, defaultVal, showWarn);
+        const prop: { isok: boolean; path: string; type: string; obj: unknown } = this.getProperty(obj, property, defaultVal, showWarn);
         return prop.obj;
     }
 
@@ -246,7 +298,7 @@ export default class NyaDom extends NyaLib {
      * @return {number} 處理結果： 0刪除 1新增 2修改
      */
     static metaSet(name: string, content?: string): number {
-        const isDelete: boolean = (content == null || content.length == 0);
+        const isDelete: boolean = content == null || content.length == 0;
         const head: HTMLHeadElement = document.head;
         const metaStr: string = 'meta';
         const metas: HTMLCollectionOf<Element> = head.getElementsByTagName(metaStr);
@@ -293,7 +345,7 @@ export default class NyaDom extends NyaLib {
      * 物件的長度
      * @param {object} obj 要檢查的物件 [] 或 {}
      * @return {number} 物件的長度
-    */
+     */
     static count(obj: object): number {
         const objKeys: Array<any> = Object.keys(obj);
         return objKeys.length;
@@ -303,7 +355,7 @@ export default class NyaDom extends NyaLib {
      * 從物件陣列中移除所有長度為 0 的物件 {}
      * @param {object[]} obj 要檢查的物件陣列
      * @return {object[]} 清理後的物件陣列
-    */
+     */
     static clearEmpty(obj: object[]): object[] {
         const newObj: object[] = [];
         for (const nowObj of obj) {
