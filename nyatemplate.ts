@@ -24,16 +24,29 @@ export class NyaTemplateElement extends NyaLib {
     code: string = '';
     isHTML: boolean = false;
     status: number = 0; // -1错误 0未完成 1完成
+    nullAlert = 'TEMP NULL';
 
     loadTo(dom: HTMLElement, config: NyaTemplateConfig = NyaTemplateConfigDefault) {
         if (this.code.length == 0) {
-            NyaLib.log('TEMP NULL', NyaTemplateElement.nyaLibName, -2);
+            NyaLib.log(this.nullAlert, NyaTemplateElement.nyaLibName, -2);
         }
         if (this.isHTML) {
             dom.innerHTML = NyaTemplate.loadTemplateHtml(this.code, config);
         } else {
             dom.innerHTML = NyaTemplate.loadTemplateCss(this.code, config);
         }
+    }
+
+    codeByID(templateID: string, replaceList:string[][] = [], replaceAll = false): string {
+        if (this.code.length == 0) {
+            NyaLib.log(this.nullAlert, NyaTemplateElement.nyaLibName, -2);
+        }
+        const config: NyaTemplateConfig = {
+            templateID: templateID,
+            replaceList: replaceList,
+            replaceAll: replaceAll,
+        };
+        return this.isHTML ? NyaTemplate.loadTemplateHtml(this.code, config) : NyaTemplate.loadTemplateCss(this.code, config);
     }
 }
 
