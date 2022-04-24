@@ -1,5 +1,5 @@
 // 字串相關處理，提取、生成等
-import NyaLib from "./main"
+import NyaLib from './main';
 
 export default class NyaStrings extends NyaLib {
     /**
@@ -9,7 +9,7 @@ export default class NyaStrings extends NyaLib {
      * @param {string} strEnd 結束字串
      * @return {string} 兩字串之間的內容
      */
-     static stringNode(strSource: string, strStart: string, strEnd: string): string {
+    static stringNode(strSource: string, strStart: string, strEnd: string): string {
         const startIndex: number = strSource.indexOf(strStart) + strStart.length;
         if (startIndex < 0) {
             return strSource;
@@ -29,7 +29,7 @@ export default class NyaStrings extends NyaLib {
      * @param {string} startChar 開始字元（不要輸入字串）
      * @param {string} endChar 結束字元（不要輸入字串）
      * @return {string} 取出的字串
-    */
+     */
     static substrPair(str: string, startChar = '{', endChar = '}'): string {
         if (str.length < 3) {
             return '';
@@ -79,33 +79,22 @@ export default class NyaStrings extends NyaLib {
     }
 
     /**
-     * 粗略時間差描述文字
-     * @param {number} time 時間戳（預設用秒級）
-     * @param {number[]} timeArr 自定義時間分隔
-     * @param {string[]} timeUnitStr 自定義時間分隔文字（s結尾複數需要帶上s，輸出時會自動增減）
-     * @return {string} 描述文字
+     * 在長度不足的字串前補指定字元（通常用於在數字前補0）
+     * @param {number|string} str 要處理的數字或字串
+     * @param {number} minLength 要保證的最小長度
+     * @param {addChar} addChar 不足位補什麼字元
+     * @return {string} 補位後的字串
      */
-    static timeDiffStr(time: number, timeArr: number[] = [525600, 262080, 43200, 1440, 60, 1, 0], timeUnitStr: string[] = ['年', '半年', '月', '日', '小时', '分钟', '刚刚', '前']): string {
-        let tTime = 0;
-        let tStr = '';
-        for (let i = 0; i < timeArr.length; i++) {
-            if (time > timeArr[i]) {
-                tTime = time / timeArr[i];
-                tStr = timeUnitStr[i];
-                break;
+    static addZeroToString(str: number | string, minLength = 2, addChar = '0'): string {
+        let nowStr: string = typeof str == 'number' ? str.toString() : str;
+        let zeros: string = '';
+        const strLen = nowStr.length;
+        if (strLen < minLength) {
+            const addZeroCharLen: number = minLength - strLen;
+            for (let i = 0; i < addZeroCharLen; i++) {
+                zeros += addChar;
             }
         }
-        if (tTime == Infinity) {
-            tTime = 0;
-        } else {
-            tTime = Math.floor(tTime);
-        }
-        if (tTime == 1 && tStr && tStr.length > 0 && tStr.substr(tStr.length - 1) == 's') {
-            tStr = tStr.substr(0, tStr.length - 1);
-        }
-        if (tTime == 0) {
-            return timeUnitStr[timeUnitStr.length - 2];
-        }
-        return tTime.toString() + ' ' + tStr + timeUnitStr[timeUnitStr.length - 1];
+        return str + zeros;
     }
 }
