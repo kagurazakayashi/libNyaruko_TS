@@ -82,10 +82,11 @@ export default class NyaStrings extends NyaLib {
      * 在長度不足的字串前補指定字元（通常用於在數字前補0）
      * @param {number|string} str 要處理的數字或字串
      * @param {number} minLength 要保證的最小長度
-     * @param {addChar} addChar 不足位補什麼字元
+     * @param {string} addChar 不足位補什麼字元
+     * @param {boolean} addToEnd 是否將補位的字元新增到字串末尾（否則放在開頭）
      * @return {string} 補位後的字串
      */
-    static addZeroToString(str: number | string, minLength = 2, addChar = '0'): string {
+    static addZeroToString(str: number | string, minLength = 2, addChar = '0', addToEnd = false): string {
         let nowStr: string = typeof str == 'number' ? str.toString() : str;
         let zeros: string = '';
         const strLen = nowStr.length;
@@ -95,6 +96,10 @@ export default class NyaStrings extends NyaLib {
                 zeros += addChar;
             }
         }
-        return str + zeros;
+        if (addToEnd) {
+            return str + zeros;
+        } else {
+            return zeros + str;
+        }
     }
 }
