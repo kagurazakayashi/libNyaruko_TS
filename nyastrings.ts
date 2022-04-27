@@ -102,4 +102,29 @@ export default class NyaStrings extends NyaLib {
             return zeros + str;
         }
     }
+
+    /**
+     * 將布林值或可以視為布林值的內容轉換為文字內容
+     * @param {boolean|number|string} sw 可以为以下值：
+     * - 布林值( true / false )
+     * - 數字( <=0 / >0 )
+     * - 字串(不区分大小写的'true'/'false'/'yes'/'no'/'0')
+     * @param {string} 當判定為「是」時要返回的字串
+     * @param {string} 當判定為「否」時要返回的字串
+     * @return {string} 「是」或「否」所代表的字串
+     */
+    static booleanToString(sw: boolean | number | string, showStrYES: string = 'YES', showStrNO: string = 'NO'): string {
+        const type: string = typeof sw;
+        if (type == 'boolean') {
+            return sw ? showStrYES : showStrNO;
+        } else if (type == 'number') {
+            return sw > 0 ? showStrYES : showStrNO;
+        } else {
+            const sws: string = sw as string;
+            if (sws.length == 0 || sws.toLowerCase() == 'false' || sws == '0' || sws.toLowerCase() == 'no') {
+                return showStrNO;
+            }
+            return showStrYES;
+        }
+    }
 }
