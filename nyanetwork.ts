@@ -1,5 +1,5 @@
 // 網路請求和返回資訊處理
-import NyaLib from "./main";
+import NyaLib from './main';
 
 export default class NyaNetwork extends NyaLib {
     /**
@@ -9,10 +9,10 @@ export default class NyaNetwork extends NyaLib {
      * @param {function} callback 回撥函式
      * @param {boolean}  async    是否使用非同步請求
      */
-    static get<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true): void {
-        this.ajax('GET', url, data, callback, async);
+    static get<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false): void {
+        this.ajax('GET', url, data, callback, async, isblob);
     }
-    
+
     /**
      * 傳送 POST 請求
      * @param {string}   url      請求網址
@@ -20,10 +20,10 @@ export default class NyaNetwork extends NyaLib {
      * @param {function} callback 回撥函式
      * @param {boolean}  async    是否使用非同步請求
      */
-    static post<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true): void {
-        this.ajax('POST', url, data, callback, async);
+    static post<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false): void {
+        this.ajax('POST', url, data, callback, async, isblob);
     }
-    
+
     /**
      * 傳送請求
      * @param {string}   type     請求方式
@@ -32,7 +32,7 @@ export default class NyaNetwork extends NyaLib {
      * @param {function} callback 回撥函式
      * @param {boolean}  async    是否使用非同步請求
      */
-    static ajax<T extends unknown>(type: string, url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true): void {
+    static ajax<T extends unknown>(type: string, url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false): void {
         if (url.length == 0) {
             return;
         }
@@ -53,7 +53,12 @@ export default class NyaNetwork extends NyaLib {
         if (isGET && isArg) {
             url += '?' + dataStr;
         }
-        xhr.open(type, url, async);
+        if (isblob) {
+            xhr.responseType = 'blob';
+            xhr.open(type, url, true);
+        } else {
+            xhr.open(type, url, async);
+        }
         xhr.onload = function () {
             // this.log(`请求网址 ${url} 成功，返回数据 ${this.responseText}`, this.nyaLibName);
             if (callback) {
