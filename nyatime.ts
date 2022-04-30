@@ -4,11 +4,15 @@ import NyaStrings from "./nyastrings";
 export default class NyaTime {
     /**
      * 將時間戳轉換為時間字串（ISO 8601）
-     * @param {number|string} timestamp 时间戳（秒级或毫秒级）
+     * @param {number|string} timestamp 時間戳（秒級或毫秒級）
+     * @param {number} unitLevel 時間單位等級（預設為6年月日時分秒，小於6則從後向前移除）
      * @return 時間字串（yyyy-mm-dd hr:mi:se）
      */
-    static timeStamp2timeString(timestamp: number | string, unitLevel: number = 6) {
+    static timeStamp2timeString(timestamp?: number | string | null, unitLevel: number = 6) {
         const char: string[] = ['0', '-', ':'];
+        if (!timestamp) {
+            return '';
+        }
         let ts: number = typeof timestamp == 'number' ? timestamp : parseInt(timestamp);
         const tsStr: string = typeof timestamp == 'string' ? timestamp : timestamp.toString();
         if (tsStr.length < 10) {
@@ -22,6 +26,38 @@ export default class NyaTime {
         const mi = unitLevel-- <= 0 ? '' : char[2] + NyaStrings.addZeroToString(date.getMinutes());
         const se = unitLevel <= 0 ? '' : char[2] + NyaStrings.addZeroToString(date.getSeconds());
         return yyyy + mm + dd + hr + mi + se;
+    }
+
+    /**
+     * 將時間戳轉換為時間字串（自定義格式）
+     * @param {number|string} timestamp 時間戳（秒級或毫秒級）
+     * @param {string} format 格式模板，預設為 'YYYY-MM-dd HH:mm:ss'
+     * @return 時間字串（yyyy-mm-dd hr:mi:se）
+     */
+    static timeStamp2timeStringFormat(timeStamp?: number | string | null, format:string = 'YYYY-MM-dd HH:mm:ss'): string {
+        if (!timeStamp) {
+            return '';
+        }
+        const strDate: Date = (typeof timeStamp == 'string') ? new Date(timeStamp.replace(/-/g, '/')) : new Date(timeStamp);
+        if (strDate instanceof Date) {
+            const dict = {
+                YYYY: strDate.getFullYear(),
+                M: strDate.getMonth() + 1,
+                d: strDate.getDate(),
+                H: strDate.getHours(),
+                m: strDate.getMinutes(),
+                s: strDate.getSeconds(),
+                MM: ('' + (strDate.getMonth() + 101)).substring(1),
+                dd: ('' + (strDate.getDate() + 100)).substring(1),
+                HH: ('' + (strDate.getHours() + 100)).substring(1),
+                mm: ('' + (strDate.getMinutes() + 100)).substring(1),
+                ss: ('' + (strDate.getSeconds() + 100)).substring(1),
+            };
+            return format.replace(/(YYYY|MM?|dd?|HH?|ss?|mm?)/g, function () {
+                return dict[arguments[0]];
+            });
+        }
+        return '';
     }
 
     /**
