@@ -93,20 +93,21 @@ export default class NyaNetwork extends NyaLib {
      * 上傳一個或多個檔案，支援附加提交資料(POST)
      * @param {string} url 接收上傳檔案的網址
      * @param {HTMLInputElement} fileInput 網頁檔案上傳框 DOM 物件
-     * @param {isMultiple} isMultiple 是否為多個檔案上傳，文件选择
+     * @param {isMultiple} isMultiple 是否為多個檔案上傳
      * @param {unknown} data 需要附加提交的引數
      * @param {function} progress 檔案請求回撥函式
-     * - {number} status 文件上传状态 0正在上传 1上传完毕 -1取消 -2超时 -3错误
-     * - {number} value 已上传字节
-     * - {number} max 总计字节
+     * - {number} status 檔案上傳狀態 0正在上傳 1上傳完畢 -1取消 -2超時 -3錯誤
+     * - {number} value 已上傳位元組
+     * - {number} max 總計位元組
      * - {number} percent 已完成百分比
      * @param {function} callback 網路請求回撥函式
-     * - {XMLHttpRequest|null} data 数据对象
-     * - {number} status HTTP状态码
+     * - {XMLHttpRequest|null} data 資料物件
+     * - {number} status HTTP狀態碼
      * @param {boolean} async 是否使用非同步請求
-     * @returns {boolean} 创建上传任务是否成功
+     * @param {string} valKey 自定義檔案提交所用的鍵
+     * @returns {boolean} 建立上傳任務是否成功
      */
-    static uploadFile<T extends unknown>(url: string, fileInput: HTMLInputElement, isMultiple = false, data?: T, progress?: (status: number, value: number, max: number, percent: number) => void, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true): boolean {
+    static uploadFile<T extends unknown>(url: string, fileInput: HTMLInputElement, isMultiple = false, data?: T, progress?: (status: number, value: number, max: number, percent: number) => void, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, valKey?: string): boolean {
         const files: FileList | null = fileInput.files;
         if (files == null || files.length == 0) {
             return false; // 沒有需要上傳的檔案
@@ -124,11 +125,11 @@ export default class NyaNetwork extends NyaLib {
             for (const key in files) {
                 if (Object.prototype.hasOwnProperty.call(files, key)) {
                     const file: File = files[key];
-                    form.append('files', file, file.name);
+                    form.append(valKey ?? 'files', file, file.name);
                 }
             }
         } else {
-            form.append('file', files[0], files[0].name);
+            form.append(valKey ?? 'file', files[0], files[0].name);
         }
         const xhr: XMLHttpRequest = new XMLHttpRequest();
         xhr.open('post', url, async);
