@@ -11,8 +11,8 @@ export default class NyaNetwork extends NyaLib {
      * - {number} status HTTP状态码
      * @param {boolean}  async    是否使用非同步請求
      */
-    static get<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false): void {
-        this.ajax('GET', url, data, callback, async, isblob);
+    static get<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false): XMLHttpRequest | null {
+        return this.ajax('GET', url, data, callback, async, isblob);
     }
 
     /**
@@ -24,8 +24,8 @@ export default class NyaNetwork extends NyaLib {
      * - {number} status HTTP状态码
      * @param {boolean}  async    是否使用非同步請求
      */
-    static post<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false): void {
-        this.ajax('POST', url, data, callback, async, isblob);
+    static post<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false): XMLHttpRequest | null {
+        return this.ajax('POST', url, data, callback, async, isblob);
     }
 
     /**
@@ -37,10 +37,11 @@ export default class NyaNetwork extends NyaLib {
      * - {XMLHttpRequest|null} data 数据对象
      * - {number} status HTTP状态码
      * @param {boolean}  async    是否使用非同步請求
+     * 
      */
-    static ajax<T extends unknown>(type: string, url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false): void {
+    static ajax<T extends unknown>(type: string, url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false): XMLHttpRequest | null {
         if (url.length == 0) {
-            return;
+            return null;
         }
         const xhr: XMLHttpRequest = new XMLHttpRequest();
         const dataArr: string[] = [];
@@ -87,6 +88,7 @@ export default class NyaNetwork extends NyaLib {
                 xhr.send();
             }
         }
+        return xhr;
     }
 
     /**
@@ -107,10 +109,10 @@ export default class NyaNetwork extends NyaLib {
      * @param {string} valKey 自定義檔案提交所用的鍵
      * @returns {boolean} 建立上傳任務是否成功
      */
-    static uploadFile<T extends unknown>(url: string, fileInput: HTMLInputElement, isMultiple = false, data?: T, progress?: (status: number, value: number, max: number, percent: number) => void, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, valKey?: string): boolean {
+    static uploadFile<T extends unknown>(url: string, fileInput: HTMLInputElement, isMultiple = false, data?: T, progress?: (status: number, value: number, max: number, percent: number) => void, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, valKey?: string): XMLHttpRequest | null {
         const files: FileList | null = fileInput.files;
         if (files == null || files.length == 0) {
-            return false; // 沒有需要上傳的檔案
+            return null; // 沒有需要上傳的檔案
         }
         const form: FormData = new FormData();
         if (data) {
@@ -175,6 +177,6 @@ export default class NyaNetwork extends NyaLib {
             }
         };
         xhr.send(form);
-        return true;
+        return xhr;
     }
 }
