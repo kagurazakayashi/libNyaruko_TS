@@ -1,4 +1,4 @@
-import NyaStrings from "./nyastrings";
+import NyaStrings from './nyastrings';
 
 // 时间转换
 export default class NyaTime {
@@ -34,13 +34,13 @@ export default class NyaTime {
      * @param {string} format 格式模板，預設為 'YYYY-MM-dd HH:mm:ss'
      * @return 時間字串（yyyy-mm-dd hr:mi:se）
      */
-    static timeStamp2timeStringFormat(timeStamp?: number | string | null, format:string = 'YYYY-MM-dd HH:mm:ss'): string {
+    static timeStamp2timeStringFormat(timeStamp?: number | string | null, format: string = 'YYYY-MM-dd HH:mm:ss'): string {
         if (!timeStamp) {
             return '';
         }
-        const strDate: Date = (typeof timeStamp == 'string') ? new Date(timeStamp.replace(/-/g, '/')) : new Date(timeStamp);
+        const strDate: Date = typeof timeStamp == 'string' ? new Date(timeStamp.replace(/-/g, '/')) : new Date(timeStamp);
         if (strDate instanceof Date) {
-            const dict = {
+            const dict: any = {
                 YYYY: strDate.getFullYear(),
                 M: strDate.getMonth() + 1,
                 d: strDate.getDate(),
@@ -67,7 +67,7 @@ export default class NyaTime {
      * @param {string[]} timeUnitStr 自定義時間分隔文字（s結尾複數需要帶上s，輸出時會自動增減）
      * @return {string} 描述文字
      */
-     static timeDiffStr(time: number, timeArr: number[] = [525600, 262080, 43200, 1440, 60, 1, 0], timeUnitStr: string[] = ['年', '半年', '月', '日', '小时', '分钟', '刚刚', '前']): string {
+    static timeDiffStr(time: number, timeArr: number[] = [525600, 262080, 43200, 1440, 60, 1, 0], timeUnitStr: string[] = ['年', '半年', '月', '日', '小时', '分钟', '刚刚', '前']): string {
         let tTime = 0;
         let tStr = '';
         for (let i = 0; i < timeArr.length; i++) {
