@@ -26,18 +26,33 @@ export class NyaTemplateElement extends NyaLib {
     status: number = 0; // -1错误 0未完成 1完成
     nullAlert = 'TEMP NULL';
 
-    loadTo(dom: HTMLElement, config: NyaTemplateConfig = NyaTemplateConfigDefault) {
+    loadTo(dom: HTMLElement, isAppend = false, config: NyaTemplateConfig = NyaTemplateConfigDefault) {
         if (this.code.length == 0) {
             NyaLib.log(this.nullAlert, NyaTemplateElement.nyaLibName, -2);
         }
         if (this.isHTML) {
-            dom.innerHTML = NyaTemplate.loadTemplateHtml(this.code, config);
+            const add: string = NyaTemplate.loadTemplateHtml(this.code, config);
+            if (isAppend) {
+                dom.innerHTML += add;
+            } else {
+                dom.innerHTML = add;
+            }
         } else {
-            dom.innerHTML = NyaTemplate.loadTemplateCss(this.code, config);
+            const add: string = NyaTemplate.loadTemplateCss(this.code, config);
+            if (add.length == 0) {
+                return;
+            }
+            let cssattr: string[] = ['<', '/', 'style>'];
+            cssattr = [cssattr[0] + cssattr[2], cssattr[0] + cssattr[1] + cssattr[2]];
+            if (isAppend) {
+                dom.innerHTML += cssattr[0] + add + cssattr[1];
+            } else {
+                dom.innerHTML = cssattr[0] + add + cssattr[1];
+            }
         }
     }
 
-    codeByID(templateID: string, replaceList:string[][] = [], replaceAll = false): string {
+    codeByID(templateID: string, replaceList: string[][] = [], replaceAll = false): string {
         if (this.code.length == 0) {
             NyaLib.log(this.nullAlert, NyaTemplateElement.nyaLibName, -2);
         }
@@ -65,21 +80,26 @@ export default class NyaTemplate extends NyaLib {
         const templateElement: NyaTemplateElement = new NyaTemplateElement();
         const extName: string = templateURL.split('.').pop() ?? '';
         templateElement.isHTML = extName.toLowerCase().indexOf('htm') != -1;
-        NyaNetwork.get(templateURL, undefined, (data: XMLHttpRequest | null, status: number) => {
-            if (data == null) {
-                NyaLib.log(status.toString() + ':' + templateURL, this.nyaLibName, -2);
-                templateElement.status = -1;
-            } else {
-                templateElement.code = data.responseText;
-                templateElement.status = 1;
-                if (dom) {
-                    templateElement.loadTo(dom, config);
+        NyaNetwork.get(
+            templateURL,
+            undefined,
+            (data: XMLHttpRequest | null, status: number) => {
+                if (data == null) {
+                    NyaLib.log(status.toString() + ':' + templateURL, this.nyaLibName, -2);
+                    templateElement.status = -1;
+                } else {
+                    templateElement.code = data.responseText;
+                    templateElement.status = 1;
+                    if (dom) {
+                        templateElement.loadTo(dom, false, config);
+                    }
                 }
-            }
-            if (callback) {
-                callback(templateElement);
-            }
-        });
+                if (callback) {
+                    callback(templateElement);
+                }
+            },
+            false
+        );
         return templateElement;
     }
 
