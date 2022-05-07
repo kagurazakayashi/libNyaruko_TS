@@ -15,7 +15,7 @@ export default class NyaEvent {
     /**
      * 新增事件監聽
      * @param {HTMLElement} domObj 要被監聽的物件
-     * @param {string} type 要監聽的事件
+     * @param {string|null} type 要監聽的事件，空字串為 'click'
      * @param {function} listener 要執行的函式
      * @param {boolean} only 每種型別事件只新增一次（防止重複監聽，如果已有相同監聽則取消本次新增）
      * @param {boolean|AddEventListenerOptions} options 可選事件監聽引數
@@ -37,10 +37,10 @@ export default class NyaEvent {
         }
         const event: NyaEventListener = new NyaEventListener();
         event.domObj = domObj;
-        event.type = type;
+        event.type = type.length > 0 ? type : 'click';
         event.listener = listener;
         domObj.addEventListener(event.type, event.listener, options);
-        nowEvents.push(type);
+        nowEvents.push(event.type);
         domObj.setAttribute(this.nyaEventStr, nowEvents.join(','));
         return event;
     }
