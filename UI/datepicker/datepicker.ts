@@ -19,51 +19,26 @@ export default class NyaDatePicker {
     nowSelectStart: number[];
     eventDay: NyaEventListener[] = [];
     events: NyaEventListener[] = [];
-    
+    selectDate: HTMLSpanElement = document.createElement('span');
 
-    localizationENG = {
-        weekdays: 'Sun,Mon,Tue,Wed,Thu,Fri,Sat'.split(','),
-        weekdayAbbreviations: 'SMTWTFS'.split(''),
-        months: 'January,February,March,April,May,June,July,August,September,October,November,December'.split(','),
-        monthAbbreviations: 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec'.split(','),
-        am: 'AM',
-        pm: 'PM',
-        cancelText: 'CANCEL',
-        confirmText: 'OK',
-        dayText(weekday: number, month: number, day: number) {
-            return `${this.weekdays[weekday]}, ${this.monthAbbreviations[month]} ${day}`;
-        },
-        monthText(month: number, year: number) {
-            return `${this.months[month]} ${year}`;
-        },
-    };
+    langEngWeekday: string[] = 'Sun,Mon,Tue,Wed,Thu,Fri,Sat'.split(',');
+    langChsWeekday: string[] = '日一二三四五六'.split('');
 
-    localizationCHS = {
-        weekdayAbbreviations: '日一二三四五六'.split(''),
-        am: '上午',
-        pm: '下午',
-        cancelText: '取消',
-        confirmText: '确定',
-        dayText(weekday: number, month: number, day: number) {
-            return `${month}月${day}日 星期${this.weekdayAbbreviations[weekday]}`;
-        },
-        monthText(month: number, year: number) {
-            return `${year}年${month + 1}月`;
-        },
-    };
+    langEngMonths: string[] = 'January,February,March,April,May,June,July,August,September,October,November,December'.split(',');
+    langChsMonths: string[] = '一,二,三,四,五,六,七,八,九,十,十一,十二'.split(',');
 
     constructor(codeDir: string, toDOM: HTMLElement) {
+        for (let i = 0; i < this.langChsMonths.length; i++) {
+            this.langChsMonths[i] += '月';
+        }
         const today = new Date();
         this.nowDateTime = [today.getFullYear(), today.getMonth() + 1, today.getDate(), today.getHours(), today.getMinutes(), today.getSeconds()];
         this.nowSelectStart = [...this.nowDateTime];
         this.domBox = toDOM;
+        // 最外層區域
         this.dom = document.createElement('div');
-        this.dom.className = 'ui-datepicker-wrapper';
-        NyaTemplate.loadTemplate(codeDir + '/datepicker.template.css', toDOM, (templateElement: NyaTemplateElement) => {
-            this.domBox.appendChild(this.dom);
-            this.dom = NyaDom.byClassFirst('ui-datepicker-wrapper') as HTMLDivElement;
-            this.buildUi(this.nowDateTime[0], this.nowDateTime[1]);
-        });
+        this.domBox.appendChild(this.dom);
+        this.buildUi(this.nowDateTime[0], this.nowDateTime[1]);
     }
 
     destructor() {
@@ -148,53 +123,62 @@ export default class NyaDatePicker {
 
     buildUi(year: number = -1, month: number = -1) {
         this.dom.innerHTML = '';
+        const div = 'div';
+        const span = 'span';
+        const button = 'button';
+        const select = 'select';
+        const option = 'option';
         const uidatepickerbtn = 'ui-datepicker-btn ';
-        const headerDiv: HTMLDivElement = document.createElement('div');
-        headerDiv.className = 'ui-datepicker-header';
-        const monPrev: HTMLSpanElement = document.createElement('span');
-        monPrev.className = uidatepickerbtn + 'ui-datepicker-prev-btn';
+        // 頭部區域
+        const headerDiv: HTMLDivElement = document.createElement(div);
+        // 按鈕：上個月
+        const monPrev: HTMLButtonElement = document.createElement(button);
         monPrev.innerHTML = '&lt;';
         headerDiv.appendChild(monPrev);
-        const eventMonPrev: NyaEventListener|null = NyaEvent.addEventListener(monPrev, '', (event: Event) => {
+        const eventMonPrev: NyaEventListener | null = NyaEvent.addEventListener(monPrev, '', (event: Event) => {
             this.switchMonth(false);
         });
         if (eventMonPrev) this.events.push(eventMonPrev);
-        const monNext: HTMLSpanElement = document.createElement('span');
+        // 按鈕：下個月
+        const monNext: HTMLButtonElement = document.createElement(button);
         monNext.className = uidatepickerbtn + 'ui-datepicker-next-btn';
         monNext.innerHTML = '&gt;';
         headerDiv.appendChild(monNext);
-        const eventMonNext:NyaEventListener|null = NyaEvent.addEventListener(monNext, '', (event: Event) => {
+        const eventMonNext: NyaEventListener | null = NyaEvent.addEventListener(monNext, '', (event: Event) => {
             this.switchMonth(true);
         });
         if (eventMonNext) this.events.push(eventMonNext);
+        // 年月選擇器
         this.currMonth.className = 'ui-datepicker-curr-month';
-        const selectYear: HTMLSelectElement = document.createElement('select');
+        // 年份選擇器
+        const selectYear: HTMLSelectElement = document.createElement(select);
         selectYear.title = 'Year';
         let maxYear = this.nowDateTime[0] + 100;
         for (let i = 1970; i <= maxYear; i++) {
-            const selectItem: HTMLOptionElement = document.createElement('option');
+            const selectItem: HTMLOptionElement = document.createElement(option);
             selectItem.value = i.toString();
             selectItem.innerText = selectItem.value;
             selectYear.appendChild(selectItem);
         }
-        const eventYear:NyaEventListener|null = NyaEvent.addEventListener(selectYear, '', (event: Event) => {
+        const eventYear: NyaEventListener | null = NyaEvent.addEventListener(selectYear, '', (event: Event) => {
             this.nowDateTime[0] = parseInt(selectYear.value);
             this.buildUiCal();
         });
         if (eventYear) this.events.push(eventYear);
         this.currMonth.appendChild(selectYear);
-        const currMonthSpan: HTMLSpanElement = document.createElement('span');
+        const currMonthSpan: HTMLSpanElement = document.createElement(span);
         currMonthSpan.innerText = ' / ';
         this.currMonth.appendChild(currMonthSpan);
-        const selectMonth: HTMLSelectElement = document.createElement('select');
+        // 月份選擇器
+        const selectMonth: HTMLSelectElement = document.createElement(select);
         selectMonth.title = 'Month';
         for (let i = 1; i <= 12; i++) {
-            const selectItem: HTMLOptionElement = document.createElement('option');
+            const selectItem: HTMLOptionElement = document.createElement(option);
             selectItem.value = i.toString();
             selectItem.innerText = selectItem.value;
             selectMonth.appendChild(selectItem);
         }
-        const eventMonth:NyaEventListener|null = NyaEvent.addEventListener(selectMonth, '', (event: Event) => {
+        const eventMonth: NyaEventListener | null = NyaEvent.addEventListener(selectMonth, '', (event: Event) => {
             this.nowDateTime[1] = parseInt(selectMonth.value);
             this.buildUiCal();
         });
@@ -205,7 +189,36 @@ export default class NyaDatePicker {
         this.datepicker.className = 'ui-datepicker-body';
         this.buildUiCal(year, month);
         this.dom.appendChild(this.datepicker);
+        // 底部操作區
+        const footerDiv = document.createElement(div);
+        // 按鈕：確定
+        const btnOK: HTMLButtonElement = document.createElement(button);
+        btnOK.innerHTML = '✓';
+        headerDiv.appendChild(btnOK);
+        const footerDivButtons: HTMLSpanElement = document.createElement(span);
+        const eventBtnOK: NyaEventListener | null = NyaEvent.addEventListener(btnOK, '', (event: Event) => {});
+        if (eventBtnOK) this.events.push(eventBtnOK);
+        footerDivButtons.appendChild(btnOK);
+        // 按鈕：取消
+        const btnCancel: HTMLButtonElement = document.createElement(button);
+        btnCancel.innerHTML = '×';
+        const eventBtnCancel: NyaEventListener | null = NyaEvent.addEventListener(btnCancel, '', (event: Event) => {});
+        if (eventBtnCancel) this.events.push(eventBtnCancel);
+        footerDivButtons.appendChild(btnCancel);
+        footerDiv.appendChild(footerDivButtons);
+        // 底部日期显示
+        this.selectedDate();
+        footerDiv.appendChild(this.selectDate);
+        this.dom.appendChild(footerDiv);
+    }
 
+    selectedDate() {
+        const dateStr: string[] = [];
+        for (let i = 0; i < 3; i++) {
+            const dateNum: number = this.nowSelectStart[i];
+            dateStr.push(dateNum < 10 ? '0' + dateNum.toString() : dateNum.toString());
+        }
+        this.selectDate.innerText = dateStr.join('-');
     }
 
     buildUiCal(year: number = this.nowDateTime[0], month: number = this.nowDateTime[1]) {
@@ -224,11 +237,13 @@ export default class NyaDatePicker {
         const yearMonthInputs: HTMLCollectionOf<HTMLSelectElement> = this.currMonth.getElementsByTagName('select');
         yearMonthInputs[0].value = monthData.year.toString();
         yearMonthInputs[1].value = monthData.month.toString();
+        // 日曆表
         const table: HTMLTableElement = document.createElement('table');
         // 表頭星期顯示
+        const thtdSize: string[] = ['40px', '30px']; // W,H
         const thead: HTMLTableSectionElement = document.createElement('thead');
         let tr: HTMLTableRowElement = document.createElement('tr');
-        for (const weekdayAbbreviation of this.localizationCHS.weekdayAbbreviations) {
+        for (const weekdayAbbreviation of this.langChsWeekday) {
             const th: HTMLTableCellElement = document.createElement('th');
             th.innerText = weekdayAbbreviation;
             tr.appendChild(th);
@@ -253,7 +268,6 @@ export default class NyaDatePicker {
             td.innerText = date.showDate.toString();
             const titleArr = [monthData.year, date.month, date.showDate];
             if (date.date != date.showDate) {
-                td.style.color = '#D3D3D3';
                 if (month == 1 && date.month == 12) {
                     titleArr[0]--;
                 } else if (month == 12 && date.month == 1) {
@@ -264,7 +278,6 @@ export default class NyaDatePicker {
             if (titleArr[0] == this.nowSelectStart[0] && titleArr[1] == this.nowSelectStart[1] && titleArr[2] == this.nowSelectStart[2]) {
                 console.log('titleArr', titleArr);
                 console.log('this.nowSelectStart', this.nowSelectStart);
-                td.style.backgroundColor = '#87CECB';
             }
             const event = NyaEvent.addEventListener(td, '', (event: Event) => {
                 this.nowSelectStart[0] = titleArr[0];
@@ -274,6 +287,7 @@ export default class NyaDatePicker {
                     otd.style.backgroundColor = '';
                 }
                 td.style.backgroundColor = '#87CECB';
+                this.selectedDate();
             });
             if (event) this.eventDay.push(event);
             tr.appendChild(td);
