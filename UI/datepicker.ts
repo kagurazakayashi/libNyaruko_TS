@@ -4,9 +4,8 @@
 // https://codepen.io/dffzmxj/pen/RwVyOOv
 // https://zhuanlan.zhihu.com/p/57043693
 
-import NyaDom from '../../nyadom';
-import NyaEvent, { NyaEventListener } from '../../nyaevent';
-import NyaTemplate, { NyaTemplateElement } from '../../nyatemplate';
+import NyaDom from '../nyadom';
+import NyaEvent, { NyaEventListener } from '../nyaevent';
 
 export default class NyaDatePicker {
     stack: any[] = [];
@@ -20,6 +19,7 @@ export default class NyaDatePicker {
     eventDay: NyaEventListener[] = [];
     events: NyaEventListener[] = [];
     selectDate: HTMLSpanElement = document.createElement('span');
+    selectedColor: string = '#87CECB';
 
     langEngWeekday: string[] = 'Sun,Mon,Tue,Wed,Thu,Fri,Sat'.split(',');
     langChsWeekday: string[] = '日一二三四五六'.split('');
@@ -37,6 +37,10 @@ export default class NyaDatePicker {
         this.domBox = toDOM;
         // 最外層區域
         this.dom = document.createElement('div');
+        this.dom.style.width = '240px';
+        this.dom.style.fontSize = '16px';
+        this.dom.style.color = '#666666';
+        this.dom.style.boxShadow = '2px 2px 8px 2px rgba(128, 128, 128, 0.3)';
         this.domBox.appendChild(this.dom);
         this.buildUi(this.nowDateTime[0], this.nowDateTime[1]);
     }
@@ -128,11 +132,38 @@ export default class NyaDatePicker {
         const button = 'button';
         const select = 'select';
         const option = 'option';
+        const styleHeaderFooter = (d: HTMLElement) => {
+            d.style.padding = '0 20px';
+            d.style.height = '50px';
+            d.style.lineHeight = '50px';
+            d.style.background = '#f0f0f0';
+            d.style.borderBottom = '1px solid #cccccc';
+        };
+        const styleButton = (d: HTMLElement) => {
+            d.style.fontFamily = 'serif';
+            d.style.fontSize = '20px';
+            d.style.width = '20px';
+            d.style.height = '50px';
+            d.style.lineHeight = '50px';
+            d.style.color = '#1abc9c';
+            d.style.textAlign = 'center';
+            d.style.cursor = 'pointer';
+            d.style.textDecoration = 'none';
+        };
+        const styleSelect = (d: HTMLElement) => {
+            d.style.border = 'none';
+            d.style.backgroundColor = 'transparent';
+            d.style.textAlign = 'right';
+        };
         const uidatepickerbtn = 'ui-datepicker-btn ';
         // 頭部區域
         const headerDiv: HTMLDivElement = document.createElement(div);
+        headerDiv.style.textAlign = 'center';
+        styleHeaderFooter(headerDiv);
         // 按鈕：上個月
         const monPrev: HTMLButtonElement = document.createElement(button);
+        styleButton(monPrev);
+        monPrev.style.float = 'left';
         monPrev.innerHTML = '&lt;';
         headerDiv.appendChild(monPrev);
         const eventMonPrev: NyaEventListener | null = NyaEvent.addEventListener(monPrev, '', (event: Event) => {
@@ -141,6 +172,8 @@ export default class NyaDatePicker {
         if (eventMonPrev) this.events.push(eventMonPrev);
         // 按鈕：下個月
         const monNext: HTMLButtonElement = document.createElement(button);
+        styleButton(monNext);
+        monNext.style.float = 'right';
         monNext.className = uidatepickerbtn + 'ui-datepicker-next-btn';
         monNext.innerHTML = '&gt;';
         headerDiv.appendChild(monNext);
@@ -152,6 +185,7 @@ export default class NyaDatePicker {
         this.currMonth.className = 'ui-datepicker-curr-month';
         // 年份選擇器
         const selectYear: HTMLSelectElement = document.createElement(select);
+        styleSelect(selectYear);
         selectYear.title = 'Year';
         let maxYear = this.nowDateTime[0] + 100;
         for (let i = 1970; i <= maxYear; i++) {
@@ -171,6 +205,7 @@ export default class NyaDatePicker {
         this.currMonth.appendChild(currMonthSpan);
         // 月份選擇器
         const selectMonth: HTMLSelectElement = document.createElement(select);
+        styleSelect(selectMonth);
         selectMonth.title = 'Month';
         for (let i = 1; i <= 12; i++) {
             const selectItem: HTMLOptionElement = document.createElement(option);
@@ -191,8 +226,12 @@ export default class NyaDatePicker {
         this.dom.appendChild(this.datepicker);
         // 底部操作區
         const footerDiv = document.createElement(div);
+        footerDiv.style.textAlign = 'right';
+        styleHeaderFooter(footerDiv);
         // 按鈕：確定
         const btnOK: HTMLButtonElement = document.createElement(button);
+        styleButton(btnOK);
+        btnOK.style.paddingRight = '15px';
         btnOK.innerHTML = '✓';
         headerDiv.appendChild(btnOK);
         const footerDivButtons: HTMLSpanElement = document.createElement(span);
@@ -201,6 +240,7 @@ export default class NyaDatePicker {
         footerDivButtons.appendChild(btnOK);
         // 按鈕：取消
         const btnCancel: HTMLButtonElement = document.createElement(button);
+        styleButton(btnCancel);
         btnCancel.innerHTML = '×';
         const eventBtnCancel: NyaEventListener | null = NyaEvent.addEventListener(btnCancel, '', (event: Event) => {});
         if (eventBtnCancel) this.events.push(eventBtnCancel);
@@ -208,6 +248,7 @@ export default class NyaDatePicker {
         footerDiv.appendChild(footerDivButtons);
         // 底部日期显示
         this.selectedDate();
+        this.selectDate.style.float = 'left';
         footerDiv.appendChild(this.selectDate);
         this.dom.appendChild(footerDiv);
     }
@@ -239,12 +280,18 @@ export default class NyaDatePicker {
         yearMonthInputs[1].value = monthData.month.toString();
         // 日曆表
         const table: HTMLTableElement = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
         // 表頭星期顯示
         const thtdSize: string[] = ['40px', '30px']; // W,H
         const thead: HTMLTableSectionElement = document.createElement('thead');
         let tr: HTMLTableRowElement = document.createElement('tr');
         for (const weekdayAbbreviation of this.langChsWeekday) {
             const th: HTMLTableCellElement = document.createElement('th');
+            th.style.fontSize = '12px';
+            th.style.width = thtdSize[0];
+            th.style.height = thtdSize[1];
+            th.style.lineHeight = thtdSize[1];
             th.innerText = weekdayAbbreviation;
             tr.appendChild(th);
         }
@@ -264,10 +311,16 @@ export default class NyaDatePicker {
                 showDate: number;
             } = monthData.days[i];
             const td: HTMLTableCellElement = document.createElement('td');
+            td.style.textAlign = 'center';
+            td.style.width = '14%';
+            td.style.height = thtdSize[1];
+            td.style.border = '1px solid #f0f0f0';
+            td.style.cursor = 'pointer';
             td.className = 'ui-datepicker-date';
             td.innerText = date.showDate.toString();
             const titleArr = [monthData.year, date.month, date.showDate];
             if (date.date != date.showDate) {
+                td.style.color = '#D3D3D3';
                 if (month == 1 && date.month == 12) {
                     titleArr[0]--;
                 } else if (month == 12 && date.month == 1) {
@@ -278,6 +331,7 @@ export default class NyaDatePicker {
             if (titleArr[0] == this.nowSelectStart[0] && titleArr[1] == this.nowSelectStart[1] && titleArr[2] == this.nowSelectStart[2]) {
                 console.log('titleArr', titleArr);
                 console.log('this.nowSelectStart', this.nowSelectStart);
+                td.style.backgroundColor = this.selectedColor;
             }
             const event = NyaEvent.addEventListener(td, '', (event: Event) => {
                 this.nowSelectStart[0] = titleArr[0];
@@ -286,7 +340,7 @@ export default class NyaDatePicker {
                 for (const otd of NyaDom.byClass('ui-datepicker-date')) {
                     otd.style.backgroundColor = '';
                 }
-                td.style.backgroundColor = '#87CECB';
+                td.style.backgroundColor = this.selectedColor;
                 this.selectedDate();
             });
             if (event) this.eventDay.push(event);
