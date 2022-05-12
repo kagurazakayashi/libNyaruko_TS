@@ -86,7 +86,7 @@ export default class NyaStrings extends NyaLib {
      * @param {boolean} addToEnd 是否將補位的字元新增到字串末尾（否則放在開頭）
      * @return {string} 補位後的字串
      */
-    static addZeroToString(str: number | string, minLength = 2, addChar = '0', addToEnd = false): string {
+    static addZero2String(str: number | string, minLength = 2, addChar = '0', addToEnd = false): string {
         let nowStr: string = typeof str == 'number' ? str.toString() : str;
         let zeros: string = '';
         const strLen = nowStr.length;
@@ -113,7 +113,7 @@ export default class NyaStrings extends NyaLib {
      * @param {string} 當判定為「否」時要返回的字串
      * @return {string} 「是」或「否」所代表的字串
      */
-    static booleanToString(sw: boolean | number | string, showStrYES: string = 'YES', showStrNO: string = 'NO'): string {
+    static boolean2String(sw: boolean | number | string, showStrYES: string = 'YES', showStrNO: string = 'NO'): string {
         const type: string = typeof sw;
         if (type == 'boolean') {
             return sw ? showStrYES : showStrNO;
@@ -126,5 +126,52 @@ export default class NyaStrings extends NyaLib {
             }
             return showStrYES;
         }
+    }
+
+    /**
+     * 將字串分割為整數陣列
+     * @param {string} str 要分割轉換的字串
+     * @param {string} separator 分隔符
+     * @param {number} max 最多分隔多少次
+     * @return {number[]} 轉換後的整數陣列
+     */
+    static string2intArray(str: string, separator: string = ',', max: number = Number.MAX_VALUE): number[] {
+        const numArr: number[] = [];
+        const strArr: string[] = str.split(separator);
+        let i: number = 0;
+        for (const tstr of strArr) {
+            const n: number = parseInt(tstr);
+            numArr.push(n);
+            i++;
+            if (i >= max) {
+                break;
+            }
+        }
+        return numArr;
+    }
+
+    /**
+     * 將數字陣列併為一個字串
+     * @param {number[]} nums 數字陣列
+     * @param {string} separator 分隔符
+     * @param {number} addZeroMinLength 不足多少位時補 0 。 0 為禁用
+     * @param {number} max 最多分隔多少次
+     * @return {string} 轉換後的字串
+     */
+    static numberArray2string(nums: number[], separator: string = ',', addZeroMinLength: number = 0, max: number = Number.MAX_VALUE): string {
+        const strArr: string[] = [];
+        let i: number = 0;
+        for (const num of nums) {
+            let str: string = num.toString();
+            if (addZeroMinLength > 0) {
+                str = this.addZero2String(str, addZeroMinLength);
+            }
+            strArr.push(str);
+            i++;
+            if (i >= max) {
+                break;
+            }
+        }
+        return strArr.join(separator);
     }
 }
