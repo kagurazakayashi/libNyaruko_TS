@@ -109,6 +109,22 @@ export default class NyaAs extends NyaLib {
      */
     static canvas(element: HTMLElement): HTMLCanvasElement {
         return this.asElement(element,'canvas') as HTMLCanvasElement;
+    /**
+     * 視某個 HTMLElement 為 HTMLCanvasElement (select)
+     * @param {HTMLElement} element 網頁元素物件，不提供或找不到則新建這種型別的物件
+     * @return {HTMLSelectElement} 明確型別的網頁元素物件
+     */
+    static select(element?: HTMLElement): HTMLSelectElement {
+        return this.asElement(element, 'select') as HTMLSelectElement;
+    }
+
+    /**
+     * 視某個 HTMLElement 為 HTMLCanvasElement (canvas)
+     * @param {HTMLElement} element 網頁元素物件，不提供或找不到則新建這種型別的物件
+     * @return {HTMLOptionElement} 明確型別的網頁元素物件
+     */
+    static option(element?: HTMLElement): HTMLOptionElement {
+        return this.asElement(element, 'option') as HTMLOptionElement;
     }
 
     /**
