@@ -87,7 +87,6 @@ export default class NyaDom extends NyaLib {
                 htmleleFunc(htmlele);
             });
         });
-        console.log(elements);
         if (elements == null || elements.length == 0) {
             return null;
         } else if (elements.length == 1) {
@@ -112,7 +111,7 @@ export default class NyaDom extends NyaLib {
     }
 
     /**
-     * 透過 class 獲取網頁元素（假設該網頁元素一定存在）
+     * 透過 class 獲取第一個網頁元素（假設該網頁元素一定存在）
      * @param {string} className 網頁元素的 class
      * @return {HTMLElement} 網頁元素物件
      */
@@ -125,6 +124,72 @@ export default class NyaDom extends NyaLib {
         }
         this.log('NO CLASS ' + className, this.nyaLibName, -2);
         return document.createElement(NyaDom.div);
+    }
+
+    /**
+     * 透過 name 獲取第一個網頁元素（假設該網頁元素一定存在）
+     * @param {string} name 網頁元素的 name
+     * @return {HTMLElement} 網頁元素物件
+     */
+    static byNameFirst(name: string): HTMLElement {
+        const divdoms: NodeListOf<HTMLElement> = document.getElementsByName(name);
+        for (const key in divdoms) {
+            if (Object.prototype.hasOwnProperty.call(divdoms, key)) {
+                return divdoms[key];
+            }
+        }
+        this.log('NO NAME ' + name, this.nyaLibName, -2);
+        return document.createElement(NyaDom.div);
+    }
+
+    /**
+     * 透過 tag 獲取第一個網頁元素（假設該網頁元素一定存在）
+     * @param {string} tagName 網頁元素的 name
+     * @return {HTMLElement} 網頁元素物件
+     */
+    static byTagFirst(tagName: string): HTMLElement {
+        const divdoms: HTMLCollectionOf<Element> = document.getElementsByTagName(tagName);
+        for (const key in divdoms) {
+            if (Object.prototype.hasOwnProperty.call(divdoms, key)) {
+                return divdoms[key] as HTMLElement;
+            }
+        }
+        this.log('NO TAG ' + tagName, this.nyaLibName, -2);
+        return document.createElement(NyaDom.div);
+    }
+
+    /**
+     * 透過 name 獲取網頁元素陣列（假設該網頁元素一定存在）
+     * @param {string} name 網頁元素的 name
+     * @return {HTMLElement} 網頁元素物件
+     */
+    static byName(name: string): HTMLElement[] {
+        const elementDoms: NodeListOf<HTMLElement> = document.getElementsByName(name);
+        const elements: HTMLElement[] = [];
+        for (const key in elementDoms) {
+            if (Object.prototype.hasOwnProperty.call(elementDoms, key)) {
+                const element = elementDoms[key];
+                elements.push(element);
+            }
+        }
+        return elements;
+    }
+
+    /**
+     * 透過 tagName 獲取網頁元素陣列（假設該網頁元素一定存在）
+     * @param {string} tagName 網頁元素的 tagName
+     * @return {HTMLElement} 網頁元素物件
+     */
+    static byTagName(tagName: string): HTMLElement[] {
+        const elementDoms: HTMLCollectionOf<Element> = document.getElementsByTagName(tagName);
+        const elements: HTMLElement[] = [];
+        for (const key in elementDoms) {
+            if (Object.prototype.hasOwnProperty.call(elementDoms, key)) {
+                const element = elementDoms[key] as HTMLElement;
+                elements.push(element);
+            }
+        }
+        return elements;
     }
 
     /**
