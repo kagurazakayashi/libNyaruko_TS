@@ -21,7 +21,7 @@ export default class NyaEvent {
      * @param {boolean|AddEventListenerOptions} options 可選事件監聽引數
      * @return {NyaEventListener|null} 如果新增監聽成功，返回事件監聽器物件；如果不成功（如重複新增），則返回空。
      */
-    static addEventListener(domObj: HTMLElement, type: string, listener: (event: Event) => void, only = true, options?: boolean | AddEventListenerOptions): NyaEventListener | null {
+    static addEventListener(domObj: HTMLElement, listener: (event: Event) => void, type: string = 'click', only = true, options?: boolean | AddEventListenerOptions): NyaEventListener | null {
         const nowEventStr: string | null = domObj.getAttribute(this.nyaEventStr);
         let nowEvents: string[] = [];
         if (nowEventStr != null) {
@@ -37,7 +37,7 @@ export default class NyaEvent {
         }
         const event: NyaEventListener = new NyaEventListener();
         event.domObj = domObj;
-        event.type = type.length > 0 ? type : 'click';
+        event.type = type;
         event.listener = listener;
         domObj.addEventListener(event.type, event.listener, options);
         nowEvents.push(event.type);
