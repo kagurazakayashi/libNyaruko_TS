@@ -30,6 +30,15 @@ export default class NyaAs extends NyaLib {
     }
 
     /**
+     * 視某個 HTMLElement 為 HTMLAnchorElement (a)
+     * @param {HTMLElement} element 網頁元素物件，不提供或找不到則新建這種型別的物件
+     * @return {HTMLAnchorElement} 明確型別的網頁元素物件
+     */
+    static a(element?: HTMLElement): HTMLAnchorElement {
+        return this.asElement(element, 'a') as HTMLAnchorElement;
+    }
+
+    /**
      * 視某個 HTMLElement 為 HTMLTableElement (table)
      * @param {HTMLElement} element 網頁元素物件，不提供或找不到則新建這種型別的物件
      * @return {HTMLTableElement} 明確型別的網頁元素物件
