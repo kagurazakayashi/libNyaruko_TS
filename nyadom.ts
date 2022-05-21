@@ -430,4 +430,14 @@ export default class NyaDom extends NyaLib {
         }
         return newObj;
     }
+
+    static removeHiddenElement(elements: HTMLElement[]): HTMLElement[] {
+        const nowElements: HTMLElement[] = [];
+        for (const element of elements) {
+            if (element.style.display != 'none') {
+                nowElements.push(element);
+            }
+        }
+        return nowElements;
+    }
 }
