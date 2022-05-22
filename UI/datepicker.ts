@@ -1,8 +1,5 @@
 // 日期選擇器控制元件
-
-// 參考了以下來源：
-// https://codepen.io/dffzmxj/pen/RwVyOOv
-// https://zhuanlan.zhihu.com/p/57043693
+// 參考了 https://zhuanlan.zhihu.com/p/57043693
 
 import NyaAs from '../nyaas';
 import NyaDom from '../nyadom';
@@ -42,14 +39,11 @@ export default class NyaDatePicker {
     }
 
     inputEventOn(isEvent: boolean) {
-        console.log(isEvent);
         if (isEvent) {
-            console.log('!!addEventListener', this.domInput);
             this.inputEvent = NyaEvent.addEventListener(this.domInput, () => {
                 this.show();
                 this.inputEventOn(false);
             });
-            console.log(this.inputEvent);
         } else {
             if (this.inputEvent) {
                 NyaEvent.removeEventListener(this.inputEvent);
@@ -267,7 +261,6 @@ export default class NyaDatePicker {
         headerDiv.appendChild(btnOK);
         const footerDivButtons: HTMLSpanElement = NyaAs.span();
         const eventBtnOK: NyaEventListener | null = NyaEvent.addEventListener(btnOK, (event: Event) => {
-            console.log('this.nowDateTime', this.nowDateTime);
             this.domInput.value = this.selectDate.innerText;
             this.destructor();
             this.inputEventOn(true);
@@ -369,8 +362,6 @@ export default class NyaDatePicker {
             }
             td.title = titleArr.join('-');
             if (titleArr[0] == this.nowSelectStart[0] && titleArr[1] == this.nowSelectStart[1] && titleArr[2] == this.nowSelectStart[2]) {
-                console.log('titleArr', titleArr);
-                console.log('this.nowSelectStart', this.nowSelectStart);
                 td.style.backgroundColor = this.selectedColor;
             }
             const event = NyaEvent.addEventListener(td, (event: Event) => {
