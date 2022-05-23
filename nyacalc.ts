@@ -1,5 +1,5 @@
 // 計算相關
-import NyaLib from "./main";
+import NyaLib from './main';
 
 // 包含尺寸和位置的結構體
 export interface NyaRect {
@@ -24,14 +24,18 @@ export default class NyaCalc extends NyaLib {
     static scopeCalc(scope: string | number[], value: number, isNewNum = false): number {
         const isNumArr = scope instanceof Array;
         const scopeStr = (scopes: string | number[]): string => {
-            return scopes as string
-        }
+            return scopes as string;
+        };
         const scopeNum = (scopes: string | number[]): number[] => {
-            return scopes as number[]
-        }
+            return scopes as number[];
+        };
         const incStart: boolean = isNumArr ? true : scopeStr(scope).substring(0, 1) == '[';
         const incEnd: boolean = isNumArr ? true : scopeStr(scope).substring(scope.length - 1) == ']';
-        const scopeArr: string[] = isNumArr ? [] : scopeStr(scope).substring(1, scope.length - 1).split(',');
+        const scopeArr: string[] = isNumArr
+            ? []
+            : scopeStr(scope)
+                  .substring(1, scope.length - 1)
+                  .split(',');
         if (isNumArr || scopeArr[0].length > 0) {
             const minVal: number = isNumArr ? scopeNum(scope)[0] : parseFloat(scopeArr[0]);
             if (incStart) {
@@ -137,5 +141,33 @@ export default class NyaCalc extends NyaLib {
         parentDOM.style.top = rect.y + px;
         parentDOM.style.width = rect.width + px;
         parentDOM.style.height = rect.height + px;
+    }
+
+    /**
+     * 將資料大小位元組數轉換為具有最接近單位的字串
+     * @param {number} bytes 位元組數
+     * @param {number} ary 每單位進位數量 ( 1000 或 1024 )
+     * @param {number} fixed 小數位數
+     * @param {string} units 單位單字母陣列字串，會在每個字母后自動加 'B' 。
+     * 最小單位強制是 'B' ，因此無需將 'B' 加入列表。
+     * @return {string} 帶有單位的檔案大小描述（如 '56 B' , '12 KB' , '1 GB' ）
+     */
+    static dataSizeStr(bytes: number, ary: number = 1024, fixed: number = 2, units: string = 'KMGTPEZY'): string {
+        if (bytes === 0) {
+            return '0 B';
+        }
+        const unitChars: string[] = units.split('');
+        unitChars.unshift('');
+        const logByte: number = Math.log(bytes);
+        const logAry: number = Math.log(ary);
+        const level: number = logByte / logAry;
+        const i = Math.floor(level);
+        const aryPi: number = Math.pow(ary, i);
+        let size: number = bytes / aryPi;
+        let sizeStr: string = size.toFixed(fixed);
+        size = parseFloat(sizeStr);
+        sizeStr = size.toString();
+        const unitStr: string = unitChars[i];
+        return sizeStr + ' ' + unitStr + 'B';
     }
 }
