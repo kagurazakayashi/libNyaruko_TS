@@ -1,5 +1,6 @@
 // 網路請求和返回資訊處理
 import NyaLib from './main';
+import NyaAs from './nyaas';
 
 export default class NyaNetwork extends NyaLib {
     /**
@@ -11,8 +12,8 @@ export default class NyaNetwork extends NyaLib {
      * - {number} status HTTP状态码
      * @param {boolean}  async    是否使用非同步請求
      */
-    static get<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false): XMLHttpRequest | null {
-        return this.ajax('GET', url, data, callback, async, isblob);
+    static get<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false, progress?: (status: number, value: number, max: number, percent: number) => void): XMLHttpRequest | null {
+        return this.ajax('GET', url, data, callback, async, isblob, progress);
     }
 
     /**
@@ -24,8 +25,8 @@ export default class NyaNetwork extends NyaLib {
      * - {number} status HTTP状态码
      * @param {boolean}  async    是否使用非同步請求
      */
-    static post<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false): XMLHttpRequest | null {
-        return this.ajax('POST', url, data, callback, async, isblob);
+    static post<T extends unknown>(url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false, progress?: (status: number, value: number, max: number, percent: number) => void): XMLHttpRequest | null {
+        return this.ajax('POST', url, data, callback, async, isblob, progress);
     }
 
     /**
@@ -37,9 +38,9 @@ export default class NyaNetwork extends NyaLib {
      * - {XMLHttpRequest|null} data 数据对象
      * - {number} status HTTP状态码
      * @param {boolean}  async    是否使用非同步請求
-     * 
+     *
      */
-    static ajax<T extends unknown>(type: string, url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false): XMLHttpRequest | null {
+    static ajax<T extends unknown>(type: string, url: string, data?: T, callback?: (data: XMLHttpRequest | null, status: number) => void, async = true, isblob: boolean = false, progress?: (status: number, value: number, max: number, percent: number) => void): XMLHttpRequest | null {
         if (url.length == 0) {
             return null;
         }
@@ -76,6 +77,11 @@ export default class NyaNetwork extends NyaLib {
             // this.log(`請求網址 ${url} 失敗，返回狀態碼 ${this.status}`, this.nyaLibName, -2);
             if (callback) {
                 callback(null, this.status);
+            }
+        };
+        xhr.onprogress = function (evt) {
+            if (progress) {
+                progress(0, evt.loaded, evt.total, Math.round((evt.loaded / evt.total) * 100));
             }
         };
         if (isGET) {
@@ -178,5 +184,50 @@ export default class NyaNetwork extends NyaLib {
         };
         xhr.send(form);
         return xhr;
+    }
+
+    /**
+     * 模擬表單提交來發送資料
+     * @param {string} type 請求方式
+     * @param {string} url 請求網址
+     * @param {unknown} data 需要提交的資料
+     * @param {string} submit 提交請求
+     * @param {number} removeTimeout 建立的表單DOM自動移除時間, -1 為不移除, 0為立即移除, >0 為多少毫秒後移除
+     * @return {HTMLFormElement|null|undefined} 建立的表單物件，如果立即移除則為 null ，如果已經自動移除則為 undefined
+     */
+    static formSubmit<T extends unknown>(type: string, url: string, data?: T, submit: string = 'submit', removeTimeout: number = 0): HTMLFormElement | null | undefined {
+        const form: HTMLFormElement = document.createElement('form');
+        form.style.display = 'none';
+        form.action = url;
+        form.method = type;
+        if (data) {
+            for (const key in data) {
+                if (Object.prototype.hasOwnProperty.call(data, key)) {
+                    const val: any = data[key];
+                    const input: HTMLInputElement = NyaAs.input();
+                    input.type = 'text';
+                    input.name = key;
+                    input.value = val;
+                    form.appendChild(input);
+                }
+            }
+        }
+        if (submit.length > 0) {
+            const submitO: HTMLInputElement = NyaAs.input();
+            submitO.type = 'submit';
+            submitO.value = submit;
+            form.appendChild(submitO);
+        }
+        document.body.appendChild(form);
+        form.submit();
+        if (removeTimeout > 0) {
+            setTimeout(() => {
+                form.remove();
+            }, removeTimeout);
+        } else if (removeTimeout == 0) {
+            form.remove();
+            return null;
+        }
+        return form;
     }
 }
