@@ -1,6 +1,6 @@
+// 时间转换
 import NyaStrings from './nyastrings';
 
-// 时间转换
 export default class NyaTime {
     /**
      * 將時間戳轉換為時間字串（yyyy-mm-dd hr:mi:se）

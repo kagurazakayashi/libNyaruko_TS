@@ -67,7 +67,7 @@ export default class NyaStrings extends NyaLib {
      * @param {string} replaceValue 要替換成的字串
      * @return {string} 修改後的字串
      */
-    static replaceAll(str: string, searchValue: string, replaceValue: string): string {
+    static replaceAll(str: string, searchValue: string, replaceValue = ''): string {
         if (str.length == 0) {
             return '';
         }
