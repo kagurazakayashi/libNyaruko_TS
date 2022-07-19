@@ -1,4 +1,4 @@
-// 时间转换
+// 時間轉換
 import NyaStrings from './nyastrings';
 
 export default class NyaTime {
