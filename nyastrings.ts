@@ -174,4 +174,84 @@ export default class NyaStrings extends NyaLib {
         }
         return strArr.join(separator);
     }
+
+    /**
+     * 根據 Ascii 碼獲取字元集合
+     * @param {number} asciiStart 起始 Ascii 碼
+     * @param {number} asciiEnd 結束 Ascii 碼
+     * @return {string} 這個 Ascii 碼區間每個 Ascii 碼對應的字元
+     */
+    static asciiSection2string(asciiStart: number, asciiEnd: number): string {
+        const chars: string[] = new Array(asciiEnd - asciiStart);
+        for (let i = asciiStart; i <= asciiEnd; i++) {
+            chars[i - asciiStart] = String.fromCharCode(i);
+        }
+        return chars.join('');
+    }
+
+    /**
+     * 獲取所有的數字
+     * @return {string} 所有的數字
+     */
+    static charsNumbers(): string {
+        return NyaStrings.asciiSection2string(48, 57);
+    }
+
+    /**
+     * 獲取所有的大寫字母
+     * @return {string} 所有的大寫字母
+     */
+    static charsCapital(): string {
+        return NyaStrings.asciiSection2string(65, 90);
+    }
+
+    /**
+     * 獲取所有的小寫字母
+     * @return {string} 所有的小寫字母
+     */
+    static charsLowercase(): string {
+        return NyaStrings.asciiSection2string(97, 122);
+    }
+
+    /**
+     * 獲取所有的英文字母
+     * @return {string} 所有的英文字母
+     */
+    static charsLetter(): string {
+        return NyaStrings.charsCapital() + NyaStrings.charsLowercase();
+    }
+
+    /**
+     * 根據進位制獲取字符集
+     * @param {number} len 進位制
+     * @return {string} 字符集
+     */
+    static chars(len: number): string {
+        const n = NyaStrings.charsNumbers();
+        switch (len) {
+            case 16:
+                return n + 'ABCDEF';
+            case 32:
+                return n + 'ABCDEFGHIJKLMNOPQRSTUV';
+            case 62:
+                return n + NyaStrings.charsLetter();
+            case 64:
+                return n + NyaStrings.charsLetter() + '-_';
+            case 96:
+                return n + NyaStrings.charsLetter() + ' `~!@#$%^&*()-_=+[{]};:\'"\\|,<.>/?\t';
+            default:
+                return '';
+        }
+    }
+
+    /**
+     * 重複輸出某個字元/字串
+     * @param {string} str 要重複輸出的字元/字串
+     * @param {number} times 重複多少次
+     * @return {string} 重複字串
+     */
+    static repeat(str: string, times: number): string {
+        // return str.repeat(times);
+        return times > 1 ? (str += NyaStrings.repeat(str, --times)) : str;
+    }
 }

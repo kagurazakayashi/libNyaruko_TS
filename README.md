@@ -42,6 +42,8 @@
   - 压缩：行程长度压缩 (RLE)
 - `nyacompresshuffman.ts`
   - 压缩：哈夫曼编码压缩 (Huffman Coding)
+- `nyacompress.ts`
+  - 压缩：自有字符串压缩格式（基于哈夫曼编码和二进制转换）
 
 ## 使用
 0. 没有发布到 npm 等地方。如果你要使用，可以：
