@@ -1,5 +1,6 @@
 // 計算相關
 import NyaLib from './main';
+import NyaStrings from './nyastrings';
 
 // 包含尺寸和位置的結構體
 export interface NyaRect {
@@ -169,5 +170,65 @@ export default class NyaCalc extends NyaLib {
         sizeStr = size.toString();
         const unitStr: string = unitChars[i];
         return sizeStr + ' ' + unitStr + 'B';
+    }
+
+    /**
+     * 進位制轉換
+     * @param {string} num 數字字串
+     * @param {number} num 或 數字
+     * @param {number} fromBase 原進位制
+     * @param {number} toBase 轉換到進位制
+     * @return {string} 轉換後的字元陣列
+     */
+    static baseChar(num: string | number, fromBase: number = 10, toBase: number = 64): string {
+        let number: number = 0;
+        // X -> 10
+        let chars: string = NyaStrings.chars(fromBase);
+        let radix: number = chars.length;
+        const numCode: string = String(num);
+        const len = numCode.length;
+        let i = 0;
+        while (i < len) {
+            number += Math.pow(radix, i++) * chars.indexOf(numCode.charAt(len - i) || '0');
+        }
+        if (toBase == 10) {
+            return number.toString();
+        }
+        // 10 -> X
+        chars = NyaStrings.chars(toBase);
+        radix = chars.length;
+        let qutient = +number;
+        const arr: string[] = [];
+        do {
+            const mod: number = qutient % radix;
+            qutient = (qutient - mod) / radix;
+            arr.unshift(chars[mod]);
+        } while (qutient);
+        return arr.join('');
+    }
+
+    /**
+     * 建立序號陣列
+     * @param {number} len 陣列長度
+     * @param {number} offset 值的偏移量
+     * @return {number[]} 序號陣列
+     */
+    static serial(len: number, offset = 0): number[] {
+        const nums: number[] = new Array<number>(len);
+        for (let i = 0; i < len; i++) {
+            const n = i + offset;
+            nums[i] = n;
+        }
+        return nums;
+    }
+
+    /**
+     * 生成一個範圍間的隨機數
+     * @param {number} min 期望的最小值
+     * @param {number} max 期望的最大值
+     * @return {number} 隨機數
+     */
+    static random(min: number = 0, max: number = 100): number {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 }

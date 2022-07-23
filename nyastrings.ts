@@ -1,5 +1,6 @@
 // 字串相關處理，提取、生成等
 import NyaLib from './main';
+import NyaCalc from './nyacalc';
 
 export default class NyaStrings extends NyaLib {
     /**
@@ -227,21 +228,32 @@ export default class NyaStrings extends NyaLib {
      * @return {string} 字符集
      */
     static chars(len: number): string {
-        const n = NyaStrings.charsNumbers();
-        switch (len) {
-            case 16:
-                return n + 'ABCDEF';
-            case 32:
-                return n + 'ABCDEFGHIJKLMNOPQRSTUV';
-            case 62:
-                return n + NyaStrings.charsLetter();
-            case 64:
-                return n + NyaStrings.charsLetter() + '-_';
-            case 96:
-                return n + NyaStrings.charsLetter() + ' `~!@#$%^&*()-_=+[{]};:\'"\\|,<.>/?\t';
-            default:
-                return '';
+        const num = NyaStrings.charsNumbers();
+        let n = num;
+        if (len == 10) {
+            return n;
         }
+        n += 'ABCDEF';
+        if (len == 16) {
+            return n;
+        }
+        n += 'GHIJKLMNOPQRSTUV';
+        if (len == 32) {
+            return n;
+        }
+        n = num + NyaStrings.charsLetter();
+        if (len == 62) {
+            return n;
+        }
+        n += '-_';
+        if (len == 64) {
+            return n;
+        }
+        n += ' `~!@#$%^&*()=+[{]};:\'"\\|,<.>/?\t';
+        if (len == 96) {
+            return n;
+        }
+        return num;
     }
 
     /**
@@ -253,5 +265,24 @@ export default class NyaStrings extends NyaLib {
     static repeat(str: string, times: number): string {
         // return str.repeat(times);
         return times > 1 ? (str += NyaStrings.repeat(str, --times)) : str;
+    }
+
+    /**
+     * 建立隨機字串
+     * @param {number} len 要生成的字串長度
+     * @param {string} dic 字元庫（預設為數字+大寫字母）
+     * @return {string} 隨機字串
+     */
+    static random(len = 32, dic = ''): string {
+        if (dic.length == 0) {
+            dic = NyaStrings.charsNumbers() + NyaStrings.charsCapital();
+        }
+        const dicLen: number = dic.length;
+        const strArr: string[] = new Array<string>(len);
+        for (let i = 0; i < len; i++) {
+            const randomNum: number = NyaCalc.random(0, dicLen);
+            strArr[i] = dic[randomNum];
+        }
+        return strArr.join();
     }
 }

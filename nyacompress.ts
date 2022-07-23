@@ -1,13 +1,9 @@
-// 壓縮: 字串壓縮(自有压缩格式)
-// 基於 霍夫曼編碼(哈夫曼编码/Huffman Coding) + 二進位制轉換壓縮 對字串進行壓縮，輸出結果為減小的字串
+// 壓縮: 字串壓縮
+// 基於 霍夫曼編碼(哈夫曼编码/Huffman Coding) + 二進位制轉置壓縮 對字串進行壓縮，輸出結果為減小的字串
 
+import NyaCalc from './nyacalc';
 import NyaCompressHuffman from './nyacompresshuffman';
 import NyaStrings from './nyastrings';
-
-interface NyaCompressBinDic {
-    char: string;
-    bin: number;
-}
 
 export default class NyaCompress {
     /**
@@ -48,37 +44,28 @@ export default class NyaCompress {
      * 壓縮二進位制數字字串
      * @param {string} binStr 由 0 和 1 組成的字串
      * @param {string} charsOrLevel 可用於編碼的字元列表
-     * @param {number} charsOrLevel 生成用於編碼的字元列表
+     * @param {number} charsOrLevel 生成用於編碼的字元列表（可以利用的字元數，選項：10,16,32,62,64,96）
      * @return {string} 壓縮後的字串
      */
     static binaryEncode(binStr: string, charsOrLevel: string | number = 64): string {
-        const chars = isNaN(Number(charsOrLevel)) ? (charsOrLevel as string) : NyaStrings.chars(charsOrLevel as number);
-        const chLen = chars.length;
-        const charBinDic: NyaCompressBinDic[] = new Array(chLen);
-        for (let i = 0; i < chLen; i++) {
-            charBinDic[i] = {
-                char: chars[i],
-                bin: parseInt(i.toString(2)),
-            };
-            // console.log(char, charBin); 輸出生成的字典
-        }
-        const maxBin: number = charBinDic[chLen - 1].bin;
+        const charBinDic: string[][] = NyaCompress.baseDic(charsOrLevel);
+        const maxBin: string = charBinDic[charBinDic.length - 1][1];
         const maxBinLen: number = maxBin.toString().length;
-        const chunks: number[] = [];
+        const chunks: string[] = [];
         let endChunksLen: number = 0;
         for (let i = 0; i < binStr.length; i += maxBinLen) {
             const chunk: string = binStr.substring(i, i + maxBinLen);
             endChunksLen = chunk.length;
-            chunks.push(parseInt(chunk));
+            chunks.push(chunk);
         }
         const chunksLen: number = chunks.length;
         const encStrArr: string[] = new Array(chunksLen);
         for (let i = 0; i < chunksLen; i++) {
-            const chunk: number = chunks[i];
+            const chunk: string = chunks[i];
             for (const chrBin of charBinDic) {
-                if (chunk == chrBin.bin) {
-                    encStrArr[i] = chrBin.char;
-                    // console.log(chrBin.char, '->', chunk); // 輸出轉換過程
+                if (parseInt(chunk) == parseInt(chrBin[1])) {
+                    encStrArr[i] = chrBin[0];
+                    // console.log('binaryEncode', chrBin[0], '->', chunk);
                     break;
                 }
             }
@@ -90,24 +77,33 @@ export default class NyaCompress {
     }
 
     /**
+     * 建立字元對照值的字典
+     * @param {string} charsOrLevel 可用於編碼的字元列表
+     * @param {number} charsOrLevel 生成用於編碼的字元列表（可以利用的字元數，選項：10,16,32,62,64,96）
+     * @param {number} valBase 對應值的進位制
+     * @returns 字元對照值字典
+     */
+    static baseDic(charsOrLevel: string | number = 64, valBase = 2): string[][] {
+        const chars = isNaN(Number(charsOrLevel)) ? (charsOrLevel as string) : NyaStrings.chars(charsOrLevel as number);
+        const chLen = chars.length;
+        const charBinDic: string[][] = new Array(chLen);
+        for (let i = 0; i < chLen; i++) {
+            charBinDic[i] = [chars[i], i.toString(valBase)];
+            // console.log(char, charBin); 輸出生成的字典
+        }
+        return charBinDic;
+    }
+
+    /**
      * 解壓縮二進位制數字字串
      * @param {string} cStr 壓縮後的字串
      * @param {string} charsOrLevel 可用於編碼的字元列表
-     * @param {number} charsOrLevel 生成用於編碼的字元列表
+     * @param {number} charsOrLevel 生成用於編碼的字元列表（可以利用的字元數，選項：10,16,32,62,64,96）
      * @return {string} 由 0 和 1 組成的字串
      */
     static binaryDecode(cStr: string, charsOrLevel: string | number = 64): string {
-        const chars = isNaN(Number(charsOrLevel)) ? (charsOrLevel as string) : NyaStrings.chars(charsOrLevel as number);
-        const chLen = chars.length;
-        const charBinDic: NyaCompressBinDic[] = new Array(chLen);
-        for (let i = 0; i < chLen; i++) {
-            charBinDic[i] = {
-                char: chars[i],
-                bin: parseInt(i.toString(2)),
-            };
-            // console.log(chars[i], parseInt(i.toString(2))); // 輸出生成的字典
-        }
-        const maxBin: number = charBinDic[chLen - 1].bin;
+        const charBinDic: string[][] = NyaCompress.baseDic(charsOrLevel);
+        const maxBin: string = charBinDic[charBinDic.length - 1][1];
         const maxBinLen: number = maxBin.toString().length;
         const endChunksLen = parseInt(cStr.substring(0, 1));
         cStr = cStr.substring(1);
@@ -116,14 +112,14 @@ export default class NyaCompress {
         for (let i = 0; i < chunkLen; i++) {
             const char: string = cStr[i];
             for (const charBin of charBinDic) {
-                if (char == charBin.char) {
-                    let binStr: string = charBin.bin.toString();
+                if (char == charBin[0]) {
+                    let binStr: string = charBin[1];
                     const diffLen: number = i == chunkLen - 1 ? endChunksLen - binStr.length : maxBinLen - binStr.length;
                     for (let j = 0; j < diffLen; j++) {
                         binStr = '0' + binStr;
                     }
                     binArr[i] = binStr;
-                    // console.log(char, '->', binStr); // 輸出轉換過程
+                    // console.log('binaryDecode', char, '->', binStr);
                     break;
                 }
             }
@@ -150,7 +146,8 @@ export default class NyaCompress {
         for (const key in dic) {
             const val2str: string = dic[key]; // 2 val
             const val10num: number = parseInt(val2str, 2); // 2 -> 10
-            const val36str: string = val10num.toString(36); // 10 -> 36
+            // const val36str: string = val10num.toString(36); // 10 -> 36
+            const val36str: string = NyaCalc.baseChar(val10num, 10, 64); // 10 -> 64
             const val36len: number = val36str.length; // 36 len
             if (val36len > max36Len) {
                 max36Len = val36len;
@@ -171,14 +168,13 @@ export default class NyaCompress {
             let len: string = lens[i];
             let diff: number = max36Len - val.length;
             for (j = 0; j < diff; j++) {
-                val += '-';
+                val += '.';
             }
             diff = maxLenLen - len.length;
             for (j = 0; j < diff; j++) {
                 len = '0' + len;
             }
             vals[i] = len + val;
-            // console.log('=',max36Len, val.length,diff,keys[i], vals[i]);
         }
         return maxLenLen.toString() + max36Len.toString() + keys.join('') + '@' + vals.join('');
     }
@@ -204,10 +200,11 @@ export default class NyaCompress {
         const dataStr: string = unitArr[unitArrLi];
         for (let i = 0; i < dataStr.length; i += unitLen) {
             let val36str: string = dataStr.substring(i, i + unitLen);
-            val36str = val36str.replace('-', '');
+            val36str = val36str.replace('.', '');
             const len10num: number = parseInt(val36str[0], 36);
             val36str = val36str.substring(1);
-            const val10num: number = parseInt(val36str, 36); // 36 -> 10
+            // const val10num: number = parseInt(val36str, 36); // 36 -> 10
+            const val10num: number = parseInt(NyaCalc.baseChar(val36str, 64, 10)); // 64 -> 10
             let val2str: string = val10num.toString(2); // 10 -> 2
             for (let i = val2str.length; i < len10num; i++) {
                 val2str = '0' + val2str;
@@ -223,45 +220,56 @@ export default class NyaCompress {
         return dic;
     }
 
-    /**
-     * 單元測試
-     * @param {string} str 要測試的原文字串
-     */
-    /*
-    static test(str: string) {
-        console.log('原文', str);
-        // Huffman 壓縮
-        const ch: NyaCompressHuffman = new NyaCompressHuffman();
-        ch.encode(str);
-        console.log('Huffman 壓縮後', ch.code, ch.keyCodeMap);
-        // binCode 壓縮
-        const binCode = NyaCompress.binaryEncode(ch.code);
-        console.log('binCode 壓縮後', binCode);
-        // keyMap 壓縮
-        const keyMap = NyaCompress.keyCodeMapEncode(ch.keyCodeMap);
-        console.log('keyMap 壓縮後', keyMap);
-        // binCode 解壓
-        ch.code = NyaCompress.binaryDecode(binCode);
-        console.log('binCode 解壓後', ch.code);
-        // keyMap 解壓
-        ch.keyCodeMap = NyaCompress.keyCodeMapDecode(keyMap);
-        console.log('keyMap 解壓後', ch.keyCodeMap);
-        // Huffman 解壓
-        ch.decode();
-        console.log('Huffman 解壓後', ch.str);
-        // 校對
-        if (str == ch.str) {
-            console.log('校對A:成功');
-        } else {
-            console.error('校對A:失敗');
-        }
-        // 函式測試
-        const compressed = NyaCompress.compression(str);
-        if (NyaCompress.decompression(compressed) == str) {
-            console.log('校對B:成功');
-        } else {
-            console.error('校對B:失敗');
-        }
-    }
-    */
+    // /**
+    //  * 單元測試
+    //  * @param {string} str 要測試的原文字串
+    //  */
+    // static test(str: string) {
+    //     console.log('原文', str);
+    //     // Huffman 壓縮
+    //     const ch: NyaCompressHuffman = new NyaCompressHuffman();
+    //     ch.encode(str);
+    //     console.log('Huffman 壓縮後', ch.code, ch.keyCodeMap);
+    //     // binCode 壓縮
+    //     const binCode = NyaCompress.binaryEncode(ch.code);
+    //     console.log('binCode 壓縮後', binCode);
+    //     // keyMap 壓縮
+    //     const keyMap = NyaCompress.keyCodeMapEncode(ch.keyCodeMap);
+    //     console.log('keyMap 壓縮後', keyMap);
+    //     const uh: NyaCompressHuffman = new NyaCompressHuffman();
+    //     // binCode 解壓
+    //     uh.code = NyaCompress.binaryDecode(binCode);
+    //     console.log('binCode 解壓後', uh.code);
+    //     if (uh.code != ch.code) {
+    //         console.error('校對失敗: binCode');
+    //         console.log('ch.code', ch.code);
+    //         console.log('uh.code', uh.code);
+    //         return;
+    //     }
+    //     // keyMap 解壓
+    //     uh.keyCodeMap = NyaCompress.keyCodeMapDecode(keyMap);
+    //     console.log('keyMap 解壓後', uh.keyCodeMap);
+    //     if (JSON.stringify(uh.keyCodeMap) != JSON.stringify(ch.keyCodeMap)) {
+    //         console.error('校對失敗: keyMap');
+    //         console.log('ch.keyCodeMap', JSON.stringify(ch.keyCodeMap));
+    //         console.log('uh.keyCodeMap', JSON.stringify(uh.keyCodeMap));
+    //         return;
+    //     }
+    //     // Huffman 解壓
+    //     uh.decode();
+    //     console.log('Huffman 解壓後', uh.str);
+    //     // 校對
+    //     if (str == ch.str) {
+    //         console.log('校對A:成功');
+    //     } else {
+    //         console.error('校對A:失敗');
+    //     }
+    //     // 函式測試
+    //     const compressed = NyaCompress.compression(str);
+    //     if (NyaCompress.decompression(compressed) == str) {
+    //         console.log('校對B:成功');
+    //     } else {
+    //         console.error('校對B:失敗');
+    //     }
+    // }
 }
