@@ -231,4 +231,15 @@ export default class NyaCalc extends NyaLib {
     static random(min: number = 0, max: number = 100): number {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
+
+    /**
+     * 將陣列中的所有值相加
+     * @param {number[]} numArr 陣列
+     * @return {number} 相加結果
+     */
+    static numberArraySum(numArr: number[]): number {
+        return numArr.reduce(function (prev, next, index, array) {
+            return prev + next;
+        });
+    }
 }
