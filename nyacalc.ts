@@ -242,4 +242,24 @@ export default class NyaCalc extends NyaLib {
             return prev + next;
         });
     }
+
+    /**
+     * 迴圈獲取每一位的值，並存到陣列中。
+     * @param {number} num 原始數字
+     * @return {number[]} 每一位數字
+     */
+    static intToArray(num: number): number[] {
+        let numArr: number[] = [];
+        let len: number = 0; // 已經獲取到的位數
+        // 每次獲取個位 n % 10
+        while (num >= 1) {
+            numArr[len++] = Math.floor(num % 10);
+            num /= 10;
+        }
+        // 陣列中的是各個位數的逆序，反序輸出每一位值
+        while (--len >= 0) {
+            numArr.push(numArr[len]);
+        }
+        return numArr.slice(numArr.length / 2);
+    }
 }
