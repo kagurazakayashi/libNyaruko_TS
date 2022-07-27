@@ -262,4 +262,18 @@ export default class NyaCalc extends NyaLib {
         }
         return numArr.slice(numArr.length / 2);
     }
+
+    /**
+     * 整數陣列轉換為布林值陣列
+     * @param {number[]} numArr 整數陣列
+     * @param {number} trueNum 从此数字起视为真
+     * @return {boolean[]} 判斷結果的布林值陣列
+     */
+    static intArrayToBoolArray(numArr: number[], trueNum: number = 1): boolean[] {
+        let booleanArr: boolean[] = [];
+        for (let i = 0; i < numArr.length; i++) {
+            booleanArr[i] = numArr[i] >= trueNum;
+        }
+        return booleanArr;
+    }
 }
