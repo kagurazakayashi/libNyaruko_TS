@@ -431,6 +431,11 @@ export default class NyaDom extends NyaLib {
         return newObj;
     }
 
+    /**
+     * 從 DOM 物件陣列中刪除所有樣式為隱藏的 DOM 物件
+     * @param {HTMLElement[]} elements DOM 物件陣列
+     * @return {HTMLElement[]} 清理後的 DOM 物件陣列
+     */
     static removeHiddenElement(elements: HTMLElement[]): HTMLElement[] {
         const nowElements: HTMLElement[] = [];
         for (const element of elements) {
@@ -439,5 +444,19 @@ export default class NyaDom extends NyaLib {
             }
         }
         return nowElements;
+    }
+
+    /**
+     * 新增子 DOM 物件
+     * @param {HTMLElement} fatherDOM 父級 DOM
+     * @param {HTMLElement} thisDOM 當前要新增的 DOM
+     * @param {boolean} isBefore 在 DOM 的前端新增
+     */
+    static addChildNode(fatherDOM: HTMLElement, thisDOM: HTMLElement, isBefore = false) {
+        if (isBefore && fatherDOM.childNodes.length > 0) {
+            fatherDOM.insertBefore(thisDOM, fatherDOM.childNodes[0]);
+        } else {
+            fatherDOM.appendChild(thisDOM);
+        }
     }
 }
