@@ -285,4 +285,13 @@ export default class NyaStrings extends NyaLib {
         }
         return strArr.join();
     }
+
+    /**
+     * 判斷一個字串是否為數字
+     * @param {string} str 字串
+     * @return {boolean} 是否為數字
+     */
+     static isNum(str: string): boolean {
+        return str != null && str.length > 0 && !isNaN(Number(str));
+    }
 }
