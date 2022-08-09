@@ -39,6 +39,9 @@ export default class NyaCompressHuffman {
         if (code.length > 0) {
             this.str = code;
         }
+        if (this.str.length == 0) {
+            return '';
+        }
         this.cal();
         this.sort();
         const root: NyaCompressHuffmanNode = this.makeTree() as NyaCompressHuffmanNode;
@@ -71,7 +74,12 @@ export default class NyaCompressHuffman {
         if (keyCM.length > 0) {
             this.keyCodeMap = keyCM;
         }
+        if (this.code.length == 0 || this.keyCodeMap == 0) {
+            return '';
+        }
         let map = this.reverseMap(this.keyCodeMap);
+        let ei = 0;
+        const codeLen: number = this.code.length;
         while (this.code) {
             result += this.code[i++];
             if (result in map) {
@@ -80,6 +88,12 @@ export default class NyaCompressHuffman {
                 this.code = this.code.replace(new RegExp('^' + result), '');
                 result = '';
                 i = 0;
+            } else {
+                ei++;
+                if (ei > codeLen) {
+                    console.error('too large', codeLen);
+                    break;
+                }
             }
         }
         this.str = data;

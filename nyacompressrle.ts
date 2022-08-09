@@ -14,6 +14,7 @@ export default class NyaCompressRLE {
      * @return {string} 壓縮後的字串
      */
     static compression(str: string, base = 64, offset = -1): string {
+        if (str.length == 0) return '';
         const result: string[] = [];
         let nowChar: string = '';
         let nowLen: number = 1 + offset;
@@ -53,6 +54,7 @@ export default class NyaCompressRLE {
      * @return {string} 原文
      */
     static decompression(str: string, base = 64, offset = -1): string {
+        if (str.length == 0) return '';
         const result: string[] = [];
         let isLen: boolean = true;
         let len: number = 0;

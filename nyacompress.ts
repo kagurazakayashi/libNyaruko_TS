@@ -7,6 +7,63 @@ import NyaStrings from './nyastrings';
 
 export default class NyaCompress {
     /**
+     * 測試能夠一次處理的極限字串尺寸
+     * 以便作為字串分組的參考
+     * @param {string} str 要測試壓縮的字串
+     * @param {number} start 起始分片數量
+     * @param {number} step 步進分片數量
+     * @param {number} end 結束分片數量（預設為輸入的字串長度）
+     * @return {string} 如果成功壓縮，返回壓縮後的字串
+     */
+    static pressure(str: string, start = 1, step = 1, end = -1): string {
+        if (end <= 0) {
+            end = str.length;
+        }
+        for (let t = start; t < end; t += step) {
+            console.log('L=', t);
+            const codeUnits: string[] = NyaCompress.subStringUnit(str, t);
+            for (const unit of codeUnits) {
+                const ziped: string = NyaCompress.compression(unit);
+                if (NyaCompress.decompression(ziped) != unit) {
+                    console.error('NG');
+                    return '';
+                }
+            }
+        }
+        console.log('L=F');
+        const zipedf: string = NyaCompress.compression(str);
+        if (NyaCompress.decompression(zipedf) != str) {
+            console.error('NG');
+            return '';
+        }
+        console.log('OK');
+        return zipedf;
+    }
+
+    /**
+     * 將字串拆成每幾個字元一組
+     * @param {string} str 字串
+     * @param {number} len 每幾個字元一組
+     * @return {string[]} 拆分後的字串陣列
+     */
+     static subStringUnit(str: string, len: number): string[] {
+        let aStr: string[] = [];
+        let nStr: string = '';
+        let i: number = 0;
+        for (const char of str) {
+            nStr += char;
+            i++;
+            if (i > len) {
+                aStr.push(nStr);
+                nStr = '';
+                i = 0;
+            }
+        }
+        aStr.push(nStr);
+        return aStr;
+    }
+
+    /**
      * 壓縮字串
      * @param {string} str 原始字串
      * @return {string} 壓縮後的字串
@@ -35,7 +92,12 @@ export default class NyaCompress {
         // binCode 解壓
         ch.code = NyaCompress.binaryDecode(datas[0]);
         // keyMap 解壓
-        ch.keyCodeMap = NyaCompress.keyCodeMapDecode(datas[1]);
+        if (datas.length > 2) {
+            datas[1] += '@';
+            for (let i = 2; i < datas.length; i++) {
+                datas[1] += '@' + datas[i];
+            }
+        }
         // Huffman 解壓
         return ch.decode();
     }
@@ -189,7 +251,11 @@ export default class NyaCompress {
         const len36str: string = str.substring(1, maxLenLen + 1);
         const max10len: number = parseInt(len36str, 36);
         const unitLen: number = max10len + 1;
-        const unitArr: string[] = str.substring(maxLenLen + 1).split('@');
+        let unitArr: string[] = str.substring(maxLenLen + 1).split('@');
+        if (unitArr.length > 2) {
+            const end = unitArr.pop() as string;
+            unitArr = [unitArr.join('@'), end];
+        }
         const unitArrLi: number = unitArr.length - 1;
         let keys: string[] = [];
         let vals: string[] = [];
@@ -224,52 +290,55 @@ export default class NyaCompress {
     //  * 單元測試
     //  * @param {string} str 要測試的原文字串
     //  */
-    // static test(str: string) {
+    // static test(str: string): boolean {
     //     console.log('原文', str);
-    //     // Huffman 壓縮
-    //     const ch: NyaCompressHuffman = new NyaCompressHuffman();
+    //     // H 壓縮
+    //     const ch: NCH = new NCH();
     //     ch.encode(str);
-    //     console.log('Huffman 壓縮後', ch.code, ch.keyCodeMap);
+    //     console.log('H 壓縮後', ch.code, ch.keyCodeMap);
     //     // binCode 壓縮
-    //     const binCode = NyaCompress.binaryEncode(ch.code);
+    //     const binCode = NC.binaryEncode(ch.code);
     //     console.log('binCode 壓縮後', binCode);
     //     // keyMap 壓縮
-    //     const keyMap = NyaCompress.keyCodeMapEncode(ch.keyCodeMap);
+    //     const keyMap = NC.keyCodeMapEncode(ch.keyCodeMap);
     //     console.log('keyMap 壓縮後', keyMap);
-    //     const uh: NyaCompressHuffman = new NyaCompressHuffman();
+    //     const uh: NCH = new NCH();
     //     // binCode 解壓
-    //     uh.code = NyaCompress.binaryDecode(binCode);
+    //     uh.code = NC.binaryDecode(binCode);
     //     console.log('binCode 解壓後', uh.code);
     //     if (uh.code != ch.code) {
     //         console.error('校對失敗: binCode');
     //         console.log('ch.code', ch.code);
     //         console.log('uh.code', uh.code);
-    //         return;
+    //         return false;
     //     }
     //     // keyMap 解壓
-    //     uh.keyCodeMap = NyaCompress.keyCodeMapDecode(keyMap);
+    //     uh.keyCodeMap = NC.keyCodeMapDecode(keyMap);
     //     console.log('keyMap 解壓後', uh.keyCodeMap);
     //     if (JSON.stringify(uh.keyCodeMap) != JSON.stringify(ch.keyCodeMap)) {
     //         console.error('校對失敗: keyMap');
     //         console.log('ch.keyCodeMap', JSON.stringify(ch.keyCodeMap));
     //         console.log('uh.keyCodeMap', JSON.stringify(uh.keyCodeMap));
-    //         return;
+    //         return false;
     //     }
-    //     // Huffman 解壓
+    //     // H 解壓
     //     uh.decode();
-    //     console.log('Huffman 解壓後', uh.str);
+    //     console.log('H 解壓後', uh.str);
     //     // 校對
     //     if (str == ch.str) {
     //         console.log('校對A:成功');
     //     } else {
     //         console.error('校對A:失敗');
+    //         return false;
     //     }
     //     // 函式測試
-    //     const compressed = NyaCompress.compression(str);
-    //     if (NyaCompress.decompression(compressed) == str) {
+    //     const compressed = NC.compression(str);
+    //     if (NC.decompression(compressed) == str) {
     //         console.log('校對B:成功');
     //     } else {
-    //         console.error('校對B:失敗');
+    //         console.error('校對B:失敗', NC.decompression(compressed), str);
+    //         return false;
     //     }
+    //     return true;
     // }
 }

@@ -245,7 +245,7 @@ export default class NyaStrings extends NyaLib {
         if (len == 62) {
             return n;
         }
-        n += '-_';
+        n += '_-';
         if (len == 64) {
             return n;
         }
