@@ -1,4 +1,7 @@
+![libNyaruko_TS](favicon.ico)
+
 # libNyaruko_TS
+
 - 雅诗编程封装代码 libNyaruko ( TypeScript 版 )
   - 通用工具库，一些跨项目常用的代码会放在里面。
   - 分为单独的组件，可以按需引入。
@@ -64,5 +67,5 @@
 - [动画功能.md](https://github.com/kagurazakayashi/libNyaruko_TS/wiki/动画功能)
 
 ## LICENSE
-- [木兰宽松许可证， 第2版](http://license.coscl.org.cn/MulanPSL2)
-- [Mulan Permissive Software License，Version 2 (Mulan PSL v2)](http://license.coscl.org.cn/MulanPSL2)
+
+Copyright (c) 2022 KagurazakaYashi libNyaruko_TS is licensed under Mulan PSL v2. You can use this software according to the terms and conditions of the Mulan PSL v2. You may obtain a copy of Mulan PSL v2 at: http://license.coscl.org.cn/MulanPSL2 THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE. See the Mulan PSL v2 for more details.
