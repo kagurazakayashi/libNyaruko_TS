@@ -8,6 +8,7 @@
   - 全部为 `static` 方法可以直接用。
   - 包含了一些名称类似于 JQ 的方法。
   - (后端: [libNyaruko_Go](https://github.com/kagurazakayashi/libNyaruko_Go) )
+- 所有 UI 组件相关类已移动到 [YAUI](https://github.com/kagurazakayashi/yaui) 。
 
 ## 组件
 
