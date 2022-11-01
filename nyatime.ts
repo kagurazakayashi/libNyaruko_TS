@@ -217,4 +217,121 @@ export default class NyaTime {
     }
     return tTime.toString() + " " + tStr + timeUnitStr[timeUnitStr.length - 1];
   }
+
+  /**
+   * 將秒數轉換為指定的時間單位
+   * @param {number} second 秒數
+   * @param {string} toUnit 轉換為時間單位
+   * @param {boolean} returnNum T:返回數字型別 F:返回字串型別
+   * @param {boolean} addUnit 如果返回字串型別是否新增單位字母，如：1h
+   * @return {number|string} 指定單位的時間字串
+   */
+  static second2TimeStr(
+    second: number,
+    toUnit = "s",
+    returnNum = false,
+    addUnit = true
+  ): string | number {
+    let tTime: number = second;
+    let tStr = "";
+    switch (toUnit) {
+      // case "s":
+      // tTime = tTime;
+      // tStr = "s";
+      // break;
+      case "m":
+        tTime = tTime / 60;
+        tStr = "m";
+        break;
+      case "h":
+        tTime = tTime / 60 / 60;
+        tStr = "h";
+        break;
+      case "d":
+        tTime = tTime / 60 / 60 / 24;
+        tStr = "d";
+        break;
+      case "w":
+        tTime = tTime / 60 / 60 / 24 / 7;
+        tStr = "w";
+        break;
+      case "M":
+        tTime = tTime / 60 / 60 / 24 / 30;
+        tStr = "M";
+        break;
+      case "y":
+        tTime = tTime / 60 / 60 / 24 / 365;
+        tStr = "y";
+        break;
+      default:
+        // tTime = second;
+        break;
+    }
+    if (returnNum) {
+      return tTime;
+    } else {
+      return tTime.toString() + (addUnit ? tStr : "");
+    }
+  }
+
+  /**
+   * 將帶有單位的時間字串轉換為指定的時間單位
+   * 支援 `s,m,h,d,w,M,y` 單位，其他單位皆視為秒
+   * @param {strin|number} timeStr 带有单位的时间字符串
+   * @param {string} toUnit 轉換為時間單位
+   * @param {boolean} returnNum T:返回數字型別 F:返回字串型別
+   * @param {boolean} addUnit 如果返回字串型別是否新增單位字母，如：1h
+   * @return {number|string} 指定單位的時間字串
+   */
+  static unitTime2time(
+    time: string | number,
+    toUnit = "s",
+    returnNum = false,
+    addUnit = true
+  ): number | string {
+    let unit = "";
+    let tTime = 0;
+    const timeStr = time.toString();
+    if (typeof time == "number") {
+      unit = "s";
+    } else {
+      if (timeStr.length < 2) {
+        return returnNum ? parseInt(timeStr) : timeStr;
+      }
+      unit = timeStr.slice(timeStr.length - 1);
+      if (isNaN(parseInt(unit))) {
+        tTime = parseInt(timeStr.slice(0, timeStr.length - 1));
+      } else {
+        tTime = parseInt(timeStr);
+        unit = "s";
+      }
+    }
+    switch (unit) {
+      case "s":
+        // time = time;
+        break;
+      case "m":
+        tTime = tTime * 60;
+        break;
+      case "h":
+        tTime = tTime * 60 * 60;
+        break;
+      case "d":
+        tTime = tTime * 60 * 60 * 24;
+        break;
+      case "w":
+        tTime = tTime * 60 * 60 * 24 * 7;
+        break;
+      case "M":
+        tTime = tTime * 60 * 60 * 24 * 30;
+        break;
+      case "y":
+        tTime = tTime * 60 * 60 * 24 * 365;
+        break;
+      default:
+        tTime = parseInt(timeStr);
+        break;
+    }
+    return NyaTime.second2TimeStr(tTime, toUnit, returnNum, addUnit);
+  }
 }
