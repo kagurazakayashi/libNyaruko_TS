@@ -100,11 +100,19 @@ export default class NyaColor extends NyaLib {
 
   /**
    * 反色
-   * @param {string} hex 16進位制顏色，輸入可選包括'#'，只支援 #RRGGBB(推薦)
+   * @param {string} hex 16進位制顏色，輸入可選包括'#'，只支援 #RRGGBB
    * @return {string} 反色
    */
-  colorReverse(hex: string): string {
-    const color: any = "0x" + hex.replace(/#/g, "");
+  static colorReverse(hex: string): string {
+    const t = "transparent";
+    if (!hex || hex.length < 6 || hex.length > 7) {
+      return t;
+    }
+    const pHex = hex.replace(/#/g, "");
+    if (pHex.length != 6) {
+      return t;
+    }
+    const color: any = "0x" + pHex.toLowerCase();
     const str = "000000" + (0xffffff - color).toString(16);
     return str.substring(str.length - 6, str.length).toUpperCase();
   }
