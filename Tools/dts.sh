@@ -1,6 +1,6 @@
 cd ..
-npm i tern
-npm i dtsmake
+npm i -d tern
+npm i -d dtsmake
 for file in `ls *.ts`
 do
     echo $file

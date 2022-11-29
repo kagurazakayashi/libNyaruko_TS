@@ -1,6 +1,7 @@
 #coding: utf-8
 #!/usr/bin/python3
 # 雅詩 Wiki 生成器 (PY3)
+# python nyawiki.py .. ../wiki
 
 import sys
 import os

@@ -1,4 +1,5 @@
 // 色彩轉換和調整
+// 顏色預覽請參考 wiki 中的 nyacolors.md
 import NyaLib from "./main";
 
 // 包含顏色數值的結構體
@@ -10,7 +11,6 @@ export interface NyaColorRGBA {
 }
 
 export default class NyaColor extends NyaLib {
-  static sss = "aaa";
   /**
    * 16進位制顏色轉換為 NyaColor
    * @param {string} hex 16進位制顏色，輸入包括'#'，支援 #RGB, #RRGGBB(推薦), #RRGGBBAA

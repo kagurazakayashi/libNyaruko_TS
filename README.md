@@ -5,8 +5,7 @@
 - 雅诗编程封装代码 libNyaruko ( TypeScript 版 )
   - 通用工具库，一些跨项目常用的代码会放在里面。
   - 分为单独的组件，可以按需引入。
-  - 全部为 `static` 方法可以直接用。
-  - 包含了一些名称类似于 JQ 的方法。
+  - 几乎都是 `static` 方法，可以直接用。
   - (后端: [libNyaruko_Go](https://github.com/kagurazakayashi/libNyaruko_Go) )
 - 所有 UI 组件相关类已移动到 [YAUI](https://github.com/kagurazakayashi/yaui) 。
 
@@ -20,8 +19,10 @@
   - 类型强制转换相关
 - `nyacalc.ts`
   - 计算相关
-- `nyacolors.ts`
+- `nyacolor.ts`
   - 色彩转换和调整
+- `nyacolors.ts`
+  - 色彩库，具体收录色彩目录和预览见 [nyacolors.md](nyacolors.md)
 - `nyaconditionalrendering.ts`
   - 处理嵌入到网页元素属性中的指令
 - `nyadom.ts`
