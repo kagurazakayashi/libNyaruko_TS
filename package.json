@@ -1,0 +1,27 @@
+{
+  "name": "libnyaruko-ts",
+  "version": "2.0.0",
+  "description": "libNyaruko 系列库是雅诗自用的通用工具库，一些跨项目常用的代码会放在里面，该库为 TS 版。",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kagurazakayashi/libNyaruko_TS.git"
+  },
+  "author": "KagurazakaYashi",
+  "license": "MulanPSL-2.0",
+  "bugs": {
+    "url": "https://github.com/kagurazakayashi/libNyaruko_TS/issues"
+  },
+  "homepage": "https://github.com/kagurazakayashi/libNyaruko_TS#readme",
+  "devDependencies": {},
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.48.1",
+    "typescript": "^4.9.4"
+  },
+  "publishConfig": {
+    "@kagurazakayashi:registry": "https://npm.pkg.github.com"
+  }
+}
