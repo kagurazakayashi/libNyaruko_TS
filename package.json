@@ -1,7 +1,8 @@
 {
-  "name": "libnyaruko-ts",
+  "name": "@kagurazakayashi/libnyaruko-ts",
   "version": "2.0.0",
   "description": "libNyaruko 系列库是雅诗自用的通用工具库，一些跨项目常用的代码会放在里面，该库为 TS 版。",
+  "type": "module",
   "main": "build/index.js",
   "scripts": {
     "test": "exit 0"
