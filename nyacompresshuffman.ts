@@ -143,7 +143,7 @@ export default class NyaCompressHuffman {
     let parentNode: NyaCompressHuffmanNode;
     const table = this.nodeList;
     while (table.length > 1) {
-      const ii0: number = table[i]["data"] ? table[i]["data"]?.val : 0;
+      const ii0: number = (table[i]["data"] ? table[i]["data"]?.val : 0) ?? 0;
       const ii1: number =
         (table[i + 1]["data"] ? table[i + 1]["data"]?.val : 0) ?? 0;
       parentNode = new NyaCompressHuffmanNode(table[i], table[i + 1], {

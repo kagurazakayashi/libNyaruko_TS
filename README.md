@@ -51,14 +51,15 @@
   - 压缩：自有字符串压缩格式（基于哈夫曼编码和二进制转换）
 
 ## 使用
+
 0. 没有发布到 npm 等地方。如果你要使用，可以：
-  - 直接拷贝需要的代码文件到自己的项目中。
-  - 在有 git 的项目中引用，命令: `git submodule add https://github.com/kagurazakayashi/libNyaruko_Go.git <下载路径>` 。
+   1. 直接拷贝需要的代码文件到自己的项目中。
+   2. 在有 git 的项目中引用，命令: `git submodule add https://github.com/kagurazakayashi/libNyaruko_TS.git <下载路径>` 。
 1. 导入所需要功能所在的文件即可。例如：
-  - 导入 `import NyaDom from "libNyaruko_TS/nyadom";`
-  - 即可使用 `NyaDom.dom('div1');`
+   1. 导入 `import NyaDom from "libNyaruko_TS/nyadom";`
+   2. 即可使用 `NyaDom.dom('div1');`
 2. 具体使用方式见 **[Wiki](https://github.com/kagurazakayashi/libNyaruko_TS/wiki)** 或源码中每个函数的注释。
-  - 可以执行 `python3 Tools/nyawiki.py . wiki` 生成 wiki 。
+   1. 可以执行 `python3 Tools/nyawiki.py . wiki` 生成 wiki 。
 
 ## 详细使用帮助
 

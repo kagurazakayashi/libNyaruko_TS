@@ -111,6 +111,15 @@ export default class NyaAs extends NyaLib {
   }
 
   /**
+   * 視某個 HTMLElement 為 HTMLVideoElement (video)
+   * @param {HTMLElement} element 網頁元素物件，不提供或找不到則新建這種型別的物件
+   * @return {HTMLVideoElement} 明確型別的網頁元素物件
+   */
+  static video(element?: HTMLElement): HTMLVideoElement {
+    return this.asElement(element, "video") as HTMLVideoElement;
+  }
+
+  /**
    * 視某個 HTMLElement 為 HTMLCanvasElement (canvas)
    * @param {HTMLElement} element 網頁元素物件，不提供或找不到則新建這種型別的物件
    * @return {HTMLCanvasElement} 明確型別的網頁元素物件
