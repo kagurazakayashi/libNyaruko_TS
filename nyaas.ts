@@ -10,6 +10,9 @@ export default class NyaAs extends NyaLib {
   static div(element?: HTMLElement): HTMLDivElement {
     return this.asElement(element, "div") as HTMLDivElement;
   }
+  static divs(element?: HTMLElement[]): HTMLDivElement[] {
+    return this.asElements(element, "div") as HTMLDivElement[];
+  }
 
   /**
    * 視某個 HTMLElement 為 HTMLSpanElement (span)
@@ -18,6 +21,9 @@ export default class NyaAs extends NyaLib {
    */
   static span(element?: HTMLElement): HTMLSpanElement {
     return this.asElement(element, "span") as HTMLSpanElement;
+  }
+  static spans(element?: HTMLElement[]): HTMLSpanElement[] {
+    return this.asElements(element, "span") as HTMLSpanElement[];
   }
 
   /**
@@ -28,6 +34,9 @@ export default class NyaAs extends NyaLib {
   static p(element?: HTMLElement): HTMLParagraphElement {
     return this.asElement(element, "p") as HTMLParagraphElement;
   }
+  static ps(element?: HTMLElement[]): HTMLParagraphElement[] {
+    return this.asElements(element, "p") as HTMLParagraphElement[];
+  }
 
   /**
    * 視某個 HTMLElement 為 HTMLAnchorElement (a)
@@ -36,6 +45,9 @@ export default class NyaAs extends NyaLib {
    */
   static a(element?: HTMLElement): HTMLAnchorElement {
     return this.asElement(element, "a") as HTMLAnchorElement;
+  }
+  static as(element?: HTMLElement[]): HTMLAnchorElement[] {
+    return this.asElements(element, "a") as HTMLAnchorElement[];
   }
 
   /**
@@ -46,6 +58,9 @@ export default class NyaAs extends NyaLib {
   static table(element?: HTMLElement): HTMLTableElement {
     return this.asElement(element, "table") as HTMLTableElement;
   }
+  static tables(element?: HTMLElement[]): HTMLTableElement[] {
+    return this.asElements(element, "table") as HTMLTableElement[];
+  }
 
   /**
    * 視某個 HTMLElement 為 HTMLTableSectionElement (tbody)
@@ -54,6 +69,9 @@ export default class NyaAs extends NyaLib {
    */
   static tbody(element?: HTMLElement): HTMLTableSectionElement {
     return this.asElement(element, "tbody") as HTMLTableSectionElement;
+  }
+  static tbodys(element?: HTMLElement[]): HTMLTableSectionElement[] {
+    return this.asElements(element, "tbody") as HTMLTableSectionElement[];
   }
 
   /**
@@ -64,6 +82,9 @@ export default class NyaAs extends NyaLib {
   static tr(element?: HTMLElement): HTMLTableRowElement {
     return this.asElement(element, "tr") as HTMLTableRowElement;
   }
+  static trs(element?: HTMLElement[]): HTMLTableRowElement[] {
+    return this.asElements(element, "tr") as HTMLTableRowElement[];
+  }
 
   /**
    * 視某個 HTMLElement 為 HTMLTableCellElement (td)
@@ -72,6 +93,9 @@ export default class NyaAs extends NyaLib {
    */
   static td(element?: HTMLElement): HTMLTableCellElement {
     return this.asElement(element, "td") as HTMLTableCellElement;
+  }
+  static tds(element?: HTMLElement[]): HTMLTableCellElement[] {
+    return this.asElements(element, "td") as HTMLTableCellElement[];
   }
 
   /**
@@ -82,6 +106,9 @@ export default class NyaAs extends NyaLib {
   static button(element?: HTMLElement): HTMLButtonElement {
     return this.asElement(element, "button") as HTMLButtonElement;
   }
+  static buttons(element?: HTMLElement[]): HTMLButtonElement[] {
+    return this.asElements(element, "button") as HTMLButtonElement[];
+  }
 
   /**
    * 視某個 HTMLElement 為 HTMLButtonElement (hr)
@@ -90,6 +117,9 @@ export default class NyaAs extends NyaLib {
    */
   static hr(element?: HTMLElement): HTMLButtonElement {
     return this.asElement(element, "hr") as HTMLButtonElement;
+  }
+  static hrs(element?: HTMLElement[]): HTMLButtonElement[] {
+    return this.asElements(element, "hr") as HTMLButtonElement[];
   }
 
   /**
@@ -100,6 +130,9 @@ export default class NyaAs extends NyaLib {
   static img(element?: HTMLElement): HTMLImageElement {
     return this.asElement(element, "img") as HTMLImageElement;
   }
+  static imgs(element?: HTMLElement[]): HTMLImageElement[] {
+    return this.asElements(element, "img") as HTMLImageElement[];
+  }
 
   /**
    * 視某個 HTMLElement 為 HTMLInputElement (input)
@@ -108,6 +141,9 @@ export default class NyaAs extends NyaLib {
    */
   static input(element?: HTMLElement): HTMLInputElement {
     return this.asElement(element, "input") as HTMLInputElement;
+  }
+  static inputs(element?: HTMLElement[]): HTMLInputElement[] {
+    return this.asElements(element, "input") as HTMLInputElement[];
   }
 
   /**
@@ -118,6 +154,9 @@ export default class NyaAs extends NyaLib {
   static video(element?: HTMLElement): HTMLVideoElement {
     return this.asElement(element, "video") as HTMLVideoElement;
   }
+  static videos(element?: HTMLElement[]): HTMLVideoElement[] {
+    return this.asElements(element, "video") as HTMLVideoElement[];
+  }
 
   /**
    * 視某個 HTMLElement 為 HTMLCanvasElement (canvas)
@@ -126,6 +165,9 @@ export default class NyaAs extends NyaLib {
    */
   static canvas(element?: HTMLElement): HTMLCanvasElement {
     return this.asElement(element, "canvas") as HTMLCanvasElement;
+  }
+  static canvases(element?: HTMLElement[]): HTMLCanvasElement[] {
+    return this.asElements(element, "canvas") as HTMLCanvasElement[];
   }
 
   /**
@@ -136,6 +178,9 @@ export default class NyaAs extends NyaLib {
   static select(element?: HTMLElement): HTMLSelectElement {
     return this.asElement(element, "select") as HTMLSelectElement;
   }
+  static selects(element?: HTMLElement[]): HTMLSelectElement[] {
+    return this.asElements(element, "select") as HTMLSelectElement[];
+  }
 
   /**
    * 視某個 HTMLElement 為 HTMLCanvasElement (canvas)
@@ -144,6 +189,44 @@ export default class NyaAs extends NyaLib {
    */
   static option(element?: HTMLElement): HTMLOptionElement {
     return this.asElement(element, "option") as HTMLOptionElement;
+  }
+  static options(element?: HTMLElement[]): HTMLOptionElement[] {
+    return this.asElements(element, "option") as HTMLOptionElement[];
+  }
+
+  /**
+   * 視某個 HTMLElement 為 HTMLOListElement (ol)
+   * @param {HTMLElement} element 網頁元素物件，不提供或找不到則新建這種型別的物件
+   * @return {HTMLOListElement} 明確型別的網頁元素物件
+   */
+  static ol(element?: HTMLElement): HTMLOListElement {
+    return this.asElement(element, "ol") as HTMLOListElement;
+  }
+  static ols(element?: HTMLElement[]): HTMLOListElement[] {
+    return this.asElements(element, "ol") as HTMLOListElement[];
+  }
+
+  /**
+   * 視某個 HTMLElement 為 HTMLUListElement (ul)
+   * @param {HTMLElement} element 網頁元素物件，不提供或找不到則新建這種型別的物件
+   */
+  static ul(element?: HTMLElement): HTMLUListElement {
+    return this.asElement(element, "ul") as HTMLUListElement;
+  }
+  static uls(element?: HTMLElement[]): HTMLUListElement[] {
+    return this.asElements(element, "ul") as HTMLUListElement[];
+  }
+
+  /**
+   * 視某個 HTMLElement 為 HTMLLIElement (li)
+   * @param {HTMLElement} element 網頁元素物件，不提供或找不到則新建這種型別
+   * @return {HTMLLIElement} 明確型別的網頁元素物件
+   */
+  static li(element?: HTMLElement): HTMLLIElement {
+    return this.asElement(element, "li") as HTMLLIElement;
+  }
+  static lis(element?: HTMLElement[]): HTMLLIElement[] {
+    return this.asElements(element, "li") as HTMLLIElement[];
   }
 
   /**
@@ -157,5 +240,11 @@ export default class NyaAs extends NyaLib {
       element = document.createElement(tagName);
     }
     return element;
+  }
+  static asElements(elements?: HTMLElement[], tagName = ""): HTMLElement[] {
+    if (!elements) {
+      elements = [];
+    }
+    return elements.map((element) => this.asElement(element, tagName));
   }
 }
