@@ -18,9 +18,9 @@ export default class NyaDom extends NyaLib {
     if (element.length == 0) {
       return null;
     }
-    const mode: string = element.substr(0, 1);
+    const mode: string = element.substring(0, 1);
     if (mode == ".") {
-      element = element.substr(1);
+      element = element.substring(1);
       if (element.length == 0) {
         return null;
       }
@@ -35,13 +35,13 @@ export default class NyaDom extends NyaLib {
       }
       return elementsArr; // Array
     } else if (mode == "#") {
-      element = element.substr(1);
+      element = element.substring(1);
       if (element.length == 0) {
         return null;
       }
       return document.getElementById(element);
     } else if (mode == "[") {
-      element = element.substr(1, element.length - 2);
+      element = element.substring(1, element.length - 2);
       if (element.length == 0) {
         return null;
       }

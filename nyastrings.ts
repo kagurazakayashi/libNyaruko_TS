@@ -59,7 +59,7 @@ export default class NyaStrings extends NyaLib {
         lc--;
       }
       if (lc == 0) {
-        return str.substr(start + 1, sLen - 1);
+        return str.substring(start + 1, sLen - 1);
       }
     }
     return "";
@@ -136,7 +136,7 @@ export default class NyaStrings extends NyaLib {
     if (type == "boolean") {
       return sw ? showStrYES : showStrNO;
     } else if (type == "number") {
-      return sw > 0 ? showStrYES : showStrNO;
+      return (sw as number) > 0 ? showStrYES : showStrNO;
     } else {
       const sws: string = sw as string;
       if (
