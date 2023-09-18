@@ -16,7 +16,7 @@
 - `nyaargv.ts`
   - 地址栏参数相关
 - `nyaas.ts`
-  - 类型强制转换相关
+  - 类型强制转换和创建元素相关，可和 `nyadom.ts` 配合使用
 - `nyacalc.ts`
   - 计算相关
 - `nyacolor.ts`
@@ -27,6 +27,8 @@
   - 处理嵌入到网页元素属性中的指令
 - `nyadom.ts`
   - 网页元素的各种获取、处理、查找、检查
+- `nyaclass.ts`
+  - 提供兼容并增强的 classList 处理功能
 - `nyaevent.ts`
   - 事件监听
 - `nyamap.ts`
