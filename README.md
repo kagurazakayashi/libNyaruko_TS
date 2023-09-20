@@ -54,7 +54,7 @@
 
 ## 使用
 
-0. 没有发布到 npm 等地方。如果你要使用，可以：
+0. 建议使用 git submodule 引入以便可选编译，你可以：
    1. 直接拷贝需要的代码文件到自己的项目中。
    2. 在有 git 的项目中引用，命令: `git submodule add https://github.com/kagurazakayashi/libNyaruko_TS.git <下载路径>` 。
 1. 导入所需要功能所在的文件即可。例如：

@@ -66,6 +66,32 @@ export default class NyaStrings extends NyaLib {
   }
 
   /**
+   * 取指定字符串之前的内容
+   * @param {string} str 被處理的字串
+   * @param {string} search 要查詢的字串
+   */
+  static substrBefore(str: string, search: string): string {
+    const index: number = str.indexOf(search);
+    if (index < 0) {
+      return str;
+    }
+    return str.substring(0, index);
+  }
+
+  /**
+   * 取指定字符串之後的内容
+   * @param {string} str 被處理的字串
+   * @param {string} search 要查詢的字串
+   */
+  static substrAfter(str: string, search: string): string {
+    const index: number = str.indexOf(search);
+    if (index < 0) {
+      return str;
+    }
+    return str.substring(index + 1);
+  }
+
+  /**
    * 替換字串中的所有指定字串
    * @param {string} str 要處理的字串
    * @param {string} searchValue 要查詢的字串
