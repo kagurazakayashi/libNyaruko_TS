@@ -351,4 +351,61 @@ export default class NyaStrings extends NyaLib {
   static isNum(str: string): boolean {
     return str != null && str.length > 0 && !isNaN(Number(str));
   }
+
+  /**
+   * 將帶特殊標記字元的字串中的特殊標記字元轉換為 HTML 標籤
+   * 例如輸入 `文字^上標_下標`
+   * 會轉換為 `文字<sup>上標</sup><sub>下標</sub>`
+   * @param {string} str 帶特殊標記字元的字串
+   * @param {string[][]} tags 要轉換的標籤，例如 `[["^", "sup"], ["_", "sub"]]`
+   * @param {string[]} tagbox 標籤的包圍符號，預設 `["<", ">"]`
+   * @return {string} 轉換後的字串
+   */
+  static char2tag(
+    str: string,
+    tags: string[][] = [
+      ["^", "sup"], // = "<sup>" + "</sup>"
+      ["_", "sub"], // = "<sub>" + "</sub>"
+    ],
+    tagbox: string[] = ["<", ">"]
+  ): string {
+    let newStr = "";
+    let prev = "";
+    for (let j = 0; j < tags.length; j++) {
+      const taginfo: string[] = tags[j];
+      taginfo.push(tagbox[0] + "/" + taginfo[1] + tagbox[1]);
+      taginfo[1] = tagbox[0] + taginfo[1] + tagbox[1];
+      tags[j] = taginfo;
+    }
+    for (let j = 0; j < str.length; j++) {
+      const char: string = str[j];
+      if (char == tags[0][0] || char == tags[1][0]) {
+        if (prev.length > 0) {
+          if (prev == tags[0][1]) {
+            newStr += tags[0][2];
+          } else if (prev == tags[1][1]) {
+            newStr += tags[1][2];
+          }
+          prev = "";
+        }
+        if (char == tags[0][0]) {
+          prev = tags[0][1];
+          newStr += tags[0][1];
+        } else if (char == tags[1][0]) {
+          prev = tags[1][1];
+          newStr += tags[1][1];
+        }
+      } else {
+        newStr += char;
+      }
+    }
+    if (prev.length > 0) {
+      if (prev == tags[0][1]) {
+        newStr += tags[0][2];
+      } else if (prev == tags[1][1]) {
+        newStr += tags[1][2];
+      }
+    }
+    return newStr;
+  }
 }
