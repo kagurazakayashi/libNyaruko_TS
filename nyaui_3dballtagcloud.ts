@@ -48,6 +48,8 @@ export default class Nya3DBallTagCloud {
   mouseY = 0; // 初始模擬滑鼠位置u（要 active=true ）
   mouseE = false; // 是否響應滑鼠移過
   sort = true; // 是否隨機重新排序
+  lightNum = 0; // 高亮顯示前端最大的幾個詞的數量(-1為所有)
+  lightColor = ""; // 高亮顯示前端最大的幾個詞的顏色
 
   dtr = Math.PI / 180;
   d = 500;
@@ -70,24 +72,39 @@ export default class Nya3DBallTagCloud {
    * @param {number} size 球體大小（直徑）
    * @param {number} speed 旋轉速度（每次刷新移動多少）
    * @param {number} fps 重新整理率（渲染次數/秒，影響效能）
+   * @param {string} light 高亮顯示前端最大的幾個詞的數量(-1為所有)和顏色，例如 3#FFFFFF
    * @param {boolean} mouseMove 是否響應滑鼠移過
    * @param {boolean} keep 是否保持動畫
-   * @param {number} toX 初始模擬滑鼠位置x（要 keep=true ）
-   * @param {number} toY 初始模擬滑鼠位置y（要 keep=true ）
+   * @param {number[]} toX 初始模擬滑鼠位置xy（要 keep=true ）
    * @param {boolean} sort 是否隨機重新排序
    * @param {boolean} tile 是否均勻鋪滿球體
    * @return {Nya3DBallTagCloud} 旋轉詞雲實例
    */
-  constructor(size = 400, speed = 10, fps = 15, mouseMove = false, keep = true, toX = -5, toY = -5, sort = true, tile = true) {
+  constructor(
+    size = 400,
+    speed = 10,
+    fps = 15,
+    light = "",
+    mouseMove = false,
+    keep = true,
+    mouseTo = [-5, -5],
+    sort = true,
+    tile = true
+  ) {
     this.radius = size / 2;
     this.tspeed = speed;
     this.fps = fps;
     this.mouseE = mouseMove;
     this.active = keep;
-    this.mouseX = toX;
-    this.mouseY = toY;
+    this.mouseX = mouseTo[0];
+    this.mouseY = mouseTo[1];
     this.sort = sort;
     this.distr = tile;
+    const lightSplit = light.split("#");
+    if (lightSplit.length == 2) {
+      this.lightNum = parseInt(lightSplit[0]);
+      this.lightColor = "#" + lightSplit[1];
+    }
     let i = 0;
     this.oDiv = document.getElementById("wrap") as HTMLDivElement;
     this.aA = this.oDiv.getElementsByTagName("span");
@@ -172,6 +189,9 @@ export default class Nya3DBallTagCloud {
     if (this.sort) {
       this.depthSort();
     }
+    if (this.lightNum != 0 && this.lightColor.length > 0) {
+      this.lightNow();
+    }
   }
 
   /**
@@ -196,6 +216,41 @@ export default class Nya3DBallTagCloud {
     });
     for (i = 0; i < aTmp.length; i++) {
       aTmp[i].style.zIndex = i.toString();
+    }
+  }
+
+  /**
+   * 高亮顯示前端最大的幾個詞
+   */
+  lightNow() {
+    let maxSize = 0;
+    let maxSpans: HTMLSpanElement[] = [];
+    for (let i = 0; i < this.aA.length; i++) {
+      const now: HTMLSpanElement = this.aA[i];
+      const fontSize = parseInt(now.style.fontSize);
+      if (fontSize > maxSize) {
+        maxSize = fontSize;
+        maxSpans = [];
+      } else if (fontSize === maxSize) {
+        maxSpans.push(now);
+      }
+      if (now.style.color !== "") {
+        now.style.color = "";
+      }
+    }
+    let ii = maxSpans.length;
+    if (this.lightNum >= 0 && this.lightNum < ii) {
+      ii = this.lightNum;
+      // const oldArr: HTMLSpanElement[] = maxSpans.slice();
+      // for (let j = 0; j < ii; j++) {
+      //   const random = Math.floor(Math.random() * oldArr.length);
+      //   oldArr[random].style.color = this.lightColor;
+      //   oldArr.splice(random, 1);
+      // }
+      // } else {
+    }
+    for (let i = 0; i < ii; i++) {
+      maxSpans[i].style.color = this.lightColor;
     }
   }
 
@@ -262,6 +317,12 @@ export default class Nya3DBallTagCloud {
     }
   }
 
+  /**
+   * 設定旋轉角度
+   * @param {number} a 旋轉角度
+   * @param {number} b 旋轉角度
+   * @param {number} c 旋轉角度
+   */
   sineCosine(a: number, b: number, c: number) {
     this.sa = Math.sin(a * this.dtr);
     this.ca = Math.cos(a * this.dtr);

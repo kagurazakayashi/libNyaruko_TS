@@ -43,8 +43,8 @@ export default class NyaCalc extends NyaLib {
     const scopeArr: string[] = isNumArr
       ? []
       : scopeStr(scope)
-        .substring(1, scope.length - 1)
-        .split(",");
+          .substring(1, scope.length - 1)
+          .split(",");
     if (isNumArr || scopeArr[0].length > 0) {
       const minVal: number = isNumArr
         ? scopeNum(scope)[0]
@@ -202,11 +202,7 @@ export default class NyaCalc extends NyaLib {
    * @param {number} toBase 轉換到進位制
    * @return {string} 轉換後的字元陣列
    */
-  static baseChar(
-    num: string | number,
-    fromBase = 10,
-    toBase = 64
-  ): string {
+  static baseChar(num: string | number, fromBase = 10, toBase = 64): string {
     let number = 0;
     // X -> 10
     let chars: string = NyaStrings.chars(fromBase);
@@ -268,6 +264,22 @@ export default class NyaCalc extends NyaLib {
     return numArr.reduce(function (prev, next) {
       return prev + next;
     });
+  }
+
+  /**
+   * 從陣列中隨機取出n個值，不重複
+   * @param {number[]} arr 陣列
+   * @param {number} n 取出的個數
+   */
+  static arrayRandomItems<T>(arr: T[], n: number): T[] {
+    const oldArr: T[] = arr.slice();
+    const result: T[] = [];
+    for (let i = 0; i < n; i++) {
+      const random = Math.floor(Math.random() * oldArr.length);
+      result.push(oldArr[random]);
+      oldArr.splice(random, 1);
+    }
+    return result;
   }
 
   /**
