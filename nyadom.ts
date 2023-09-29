@@ -1,5 +1,7 @@
 // 網頁元素的各種獲取、處理、查詢、檢查
 import NyaLib from "./main";
+import NyaCalc from "./nyacalc";
+import { NyaDirection } from "./nyatypes";
 
 export default class NyaDom extends NyaLib {
   static div = "div";
@@ -89,7 +91,10 @@ export default class NyaDom extends NyaLib {
         htmleleFunc(htmlele);
       }
       elements.forEach((ele) => {
-        const htmlele: HTMLElement | HTMLElement[] | null = this.dom(elstr, ele);
+        const htmlele: HTMLElement | HTMLElement[] | null = this.dom(
+          elstr,
+          ele
+        );
         htmleleFunc(htmlele);
       });
     });
@@ -290,7 +295,7 @@ export default class NyaDom extends NyaLib {
   /**
    * 遍歷 DOM 物件
    * @param {string} selector 要操作的 DOM 物件描述
-   * @param {function} callback 處理遍歷物件的函式
+   * @param {static} callback 處理遍歷物件的函式
    */
   static each(
     selector: string,
@@ -500,5 +505,149 @@ export default class NyaDom extends NyaLib {
     } else {
       fatherDOM.appendChild(thisDOM);
     }
+  }
+
+  /**
+   * 獲取物件距離頂部的距離
+   * @param {HTMLElement} element 物件
+   * @return {number} 距離(px)
+   */
+  static getTop(element: HTMLElement): number {
+    let offset: number = element.offsetTop;
+    if (element.offsetParent != null) {
+      offset += NyaDom.getTop(element.offsetParent as HTMLElement);
+    }
+    return offset;
+  }
+
+  /**
+   * 獲取物件距離左側的距離
+   * @param {HTMLElement} element 物件
+   * @return {number} 距離(px)
+   */
+  static getLeft(element: HTMLElement) {
+    let offset: number = element.offsetLeft;
+    if (element.offsetParent != null) {
+      offset += NyaDom.getLeft(element.offsetParent as HTMLElement);
+    }
+    return offset;
+  }
+
+  /**
+   * 獲取捲軸距離頂部的距離
+   * @param {HTMLElement} element 物件
+   * @return {number} 距離(px)
+   */
+  static getScrollTop(
+    element = document.documentElement ?? document.body
+  ): number {
+    let scrollTop: number = 0;
+    if (element.scrollTop) {
+      scrollTop = element.scrollTop;
+    } else if (element.parentElement) {
+      scrollTop = NyaDom.getScrollTop(element.parentElement);
+    }
+    return scrollTop;
+  }
+
+  /**
+   * 獲取捲軸距離左側的距離
+   * @param {HTMLElement} element 物件
+   * @return {number} 距離(px)
+   */
+  static getScrollLeft(
+    element = document.documentElement ?? document.body
+  ): number {
+    let scrollLeft: number = 0;
+    if (element.scrollLeft) {
+      scrollLeft = element.scrollLeft;
+    } else if (element.parentElement) {
+      scrollLeft = NyaDom.getScrollLeft(element.parentElement);
+    }
+    return scrollLeft;
+  }
+
+  /**
+   * 獲取當前可視範圍的高度
+   * @return {number} 高度(px)
+   */
+  static getClientHeight(): number {
+    let clientHeight = 0;
+    if (document.body.clientHeight && document.documentElement.clientHeight) {
+      clientHeight = Math.min(
+        document.body.clientHeight,
+        document.documentElement.clientHeight
+      );
+    } else {
+      clientHeight = Math.max(
+        document.body.clientHeight,
+        document.documentElement.clientHeight
+      );
+    }
+    return clientHeight;
+  }
+
+  /**
+   * 獲取當前可視範圍的寬度
+   * @return {number} 寬度(px)
+   */
+  static getClientWidth(): number {
+    let clientWidth = 0;
+    if (document.body.clientWidth && document.documentElement.clientWidth) {
+      clientWidth = Math.min(
+        document.body.clientWidth,
+        document.documentElement.clientWidth
+      );
+    } else {
+      clientWidth = Math.max(
+        document.body.clientWidth,
+        document.documentElement.clientWidth
+      );
+    }
+    return clientWidth;
+  }
+
+  /**
+   * 計算物件相對於網頁當前滾動進入的分比
+   * 可以使用 NyaCalc.scrollElementSize 計算物件基於容器的尺寸
+   * @param {HTMLElement} element 物件
+   * @param {NyaDirection} containerBaseline 基線相對於網頁的哪個邊（上下左右，默认下方）
+   * top   : 0 為元素頂部在視窗頂部(視窗內上面), 1 為元素底部在視窗頂部(視窗外上面)
+   * bottom: 0 為元素頂部在視窗底部(視窗外下面), 1 為元素底部在視窗底部(視窗內下面)
+   * left  : 0 為元素左側在視窗左側(視窗內左側), 1 為元素右側在視窗左側(視窗外左側)
+   * right : 0 為元素左側在視窗右側(視窗外右側), 1 為元素右側在視窗右側(視窗內右側)
+   * @return {number} 比例(float 0 - 1)
+   */
+  static scrollElementPageSize(
+    element: HTMLElement,
+    containerBaseline = NyaDirection.bottom
+  ): number {
+    const isHeight =
+      containerBaseline == NyaDirection.top ||
+      containerBaseline == NyaDirection.bottom;
+    const scrollSize = isHeight
+      ? NyaDom.getScrollTop()
+      : NyaDom.getScrollLeft();
+    const clientSize = isHeight
+      ? NyaDom.getClientHeight()
+      : NyaDom.getClientWidth();
+    const elementStart = isHeight
+      ? NyaDom.getTop(element)
+      : NyaDom.getLeft(element);
+    const elementSize = isHeight ? element.clientHeight : element.clientWidth;
+    const scroll: {
+      start: number;
+      end: number;
+      object: number;
+      objectEnd: number;
+      scroll: number;
+    } = NyaCalc.scrollElementSize(
+      containerBaseline,
+      scrollSize,
+      elementStart,
+      elementSize,
+      clientSize
+    );
+    return scroll.scroll;
   }
 }

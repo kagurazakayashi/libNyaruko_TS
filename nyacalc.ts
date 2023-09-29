@@ -1,14 +1,7 @@
 // 計算相關
 import NyaLib from "./main";
 import NyaStrings from "./nyastrings";
-
-// 包含尺寸和位置的結構體
-export interface NyaRect {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
+import { NyaDirection, NyaRect } from "./nyatypes";
 
 export default class NyaCalc extends NyaLib {
   /**
@@ -145,6 +138,63 @@ export default class NyaCalc extends NyaLib {
       y: y,
       width: w,
       height: h,
+    };
+  }
+
+  /**
+   * 計算物件相對於容器當前滾動進入的分比
+   * 可以使用 NyaDom.scrollElementPageSize 計算物件基於頁面的尺寸
+   * @param {NyaDirection} containerBaseline 基線相對於容器的哪個邊（上下左右）
+   * top   : 0 為元素頂部在視窗頂部(視窗內上面), 1 為元素底部在視窗頂部(視窗外上面)
+   * bottom: 0 為元素頂部在視窗底部(視窗外下面), 1 為元素底部在視窗底部(視窗內下面)
+   * left  : 0 為元素左側在視窗左側(視窗內左側), 1 為元素右側在視窗左側(視窗外左側)
+   * right : 0 為元素左側在視窗右側(視窗外右側), 1 為元素右側在視窗右側(視窗內右側)
+   * @param {number} scroll 容器當前滾動位置
+   * @param {number} objectStart 物件的 Top 或 Left
+   * @param {number} objectSize 物件的 Height 或 Width
+   *        objectStart 和 objectSize 需要成對提供：
+   *        Top 和 Height , 或者 Left 和 Width
+   * @param {number} containerSize 容器的 Height 或 Width
+   * @param {number} containerStart 容器的 Top 或 Left (預設 0)
+   * @return {number} start 滾動到哪裡接觸容器起始邊緣
+   * @return {number} end 滾動到哪裡接觸容器結束邊緣
+   * @return {number} object 基於物件內部座標的當前滾動位置
+   * @return {number} objectEnd 基於物件內部座標的容器結束邊緣
+   * @return {number} scroll 滾動比例 (float 0 - 1)
+   */
+  static scrollElementSize(
+    containerBaseline: NyaDirection,
+    scroll: number,
+    objectStart: number,
+    objectSize: number,
+    containerSize: number,
+    containerStart = 0
+  ): {
+    start: number;
+    end: number;
+    object: number;
+    objectEnd: number;
+    scroll: number;
+  } {
+    let baseline = scroll;
+    if (
+      containerBaseline == NyaDirection.bottom ||
+      containerBaseline == NyaDirection.right
+    ) {
+      baseline += containerSize;
+    }
+    if (containerStart != 0) {
+      baseline += containerStart;
+    }
+    const on: number[] = [baseline - objectStart, objectSize];
+    const zone: number[] = [objectStart, objectStart + objectSize];
+    const p: number = on[0] / on[1];
+    return {
+      start: zone[0],
+      end: zone[1],
+      object: on[0],
+      objectEnd: on[1],
+      scroll: p,
     };
   }
 
