@@ -65,10 +65,32 @@ export default class Nya3DBallTagCloud {
   sb = 0;
   sc = 0;
   aA: HTMLCollectionOf<HTMLSpanElement>;
-  oDiv: HTMLDivElement;
+  oDiv: HTMLElement;
+  isPause = false;
+  enableDisplay = "";
+
+  /**
+   * 根据词典生成词块（在 new 之前，需要先生成词块）
+   * @param {HTMLElement} container 容器
+   * @param {string} elementClassName 词条对象的类名称
+   * @param {string[]} dictionary 词典
+   * @param {number} repeat 词典重复次数
+   */
+  static createWords(container:HTMLElement, elementClassName:string, dictionary:string[], repeat:number) {
+    for (let x = 0; x < repeat; x++) {
+      for (let i = 0; i < dictionary.length; i++) {
+        const word: HTMLSpanElement = document.createElement("span");
+        word.className = elementClassName;
+        word.id = elementClassName + i.toString();
+        word.innerHTML = dictionary[i];
+        container.appendChild(word);
+      }
+    }
+  }
 
   /**
    * 生成球形的旋轉詞雲
+   * @param {HTMLElement} element 詞雲容器
    * @param {number} size 球體大小（直徑）
    * @param {number} speed 旋轉速度（每次刷新移動多少）
    * @param {number} fps 重新整理率（渲染次數/秒，影響效能）
@@ -81,6 +103,7 @@ export default class Nya3DBallTagCloud {
    * @return {Nya3DBallTagCloud} 旋轉詞雲實例
    */
   constructor(
+    element: HTMLElement,
     size = 400,
     speed = 10,
     fps = 15,
@@ -100,13 +123,14 @@ export default class Nya3DBallTagCloud {
     this.mouseY = mouseTo[1];
     this.sort = sort;
     this.distr = tile;
+    this.oDiv = element;
+    this.enableDisplay = element.style.display;
     const lightSplit = light.split("#");
     if (lightSplit.length == 2) {
       this.lightNum = parseInt(lightSplit[0]);
       this.lightColor = "#" + lightSplit[1];
     }
     let i = 0;
-    this.oDiv = document.getElementById("wrap") as HTMLDivElement;
     this.aA = this.oDiv.getElementsByTagName("span");
     for (i = 0; i < this.aA.length; i++) {
       const oTag: Nya3DBallTagCloudItem = new Nya3DBallTagCloudItem(
@@ -134,8 +158,24 @@ export default class Nya3DBallTagCloud {
       };
     }
     setInterval(() => {
-      this.update();
+      if (!this.isPause) {
+        this.update();
+      }
     }, (1 / this.fps) * 1000);
+  }
+
+  /**
+   * 暫停或繼續
+   * @param pause 是否暫停
+   * @param hidden 暫停時是否隱藏
+   */
+  pause(pause: boolean, hidden = true) {
+    if (this.isPause != pause) {
+      this.isPause = pause;
+      if (hidden) {
+        this.oDiv.style.display = pause ? "none" : this.enableDisplay;
+      }
+    }
   }
 
   /**
