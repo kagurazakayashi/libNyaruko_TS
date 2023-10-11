@@ -3,6 +3,16 @@ import NyaLib from "./main";
 import NyaStrings from "./nyastrings";
 import { NyaDirection, NyaRect } from "./nyatypes";
 
+export enum NyaTimeUnit {
+  milli = 1,
+  second = 1000,
+  minute = 60000,
+  hour = 3600000,
+  day = 86400000,
+  month = 2592000000,
+  year = 31536000000,
+}
+
 export default class NyaCalc extends NyaLib {
   /**
    * 檢查數值是否在區間中
@@ -364,5 +374,47 @@ export default class NyaCalc extends NyaLib {
       booleanArr[i] = numArr[i] >= trueNum;
     }
     return booleanArr;
+  }
+
+  /**
+   * 計算兩個日期的間隔
+   * @param {Date|string} startDate 開始日期
+   * @param {NyaTimeUnit} diffType 間隔單位
+   * @param {Date|string} endDate 結束日期
+   * @return {number} 間隔數值
+   */
+  static dateDiff(
+    startDate: Date | string,
+    diffType: NyaTimeUnit = NyaTimeUnit.second,
+    endDate: Date | string = new Date()
+  ): number {
+    startDate = new Date(startDate);
+    endDate = new Date(endDate);
+    const diff = endDate.getTime() - startDate.getTime();
+    let result = 0;
+    switch (diffType) {
+      case NyaTimeUnit.milli:
+        result = diff;
+        break;
+      case NyaTimeUnit.second:
+        result = Math.floor(diff / 1000);
+        break;
+      case NyaTimeUnit.minute:
+        result = Math.floor(diff / 60000);
+        break;
+      case NyaTimeUnit.hour:
+        result = Math.floor(diff / 3600000);
+        break;
+      case NyaTimeUnit.day:
+        result = Math.floor(diff / 86400000);
+        break;
+      case NyaTimeUnit.month:
+        result = Math.floor(diff / 2592000000);
+        break;
+      case NyaTimeUnit.year:
+        result = Math.floor(diff / 31536000000);
+        break;
+    }
+    return result;
   }
 }

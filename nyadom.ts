@@ -619,7 +619,7 @@ export default class NyaDom extends NyaLib {
    * @return {number} 比例(float 0 - 1)
    */
   static scrollElementPageSize(
-    element: HTMLElement,
+    element: HTMLElement = document.body,
     containerBaseline = NyaDirection.bottom
   ): number {
     const isHeight =
