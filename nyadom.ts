@@ -108,118 +108,124 @@ export default class NyaDom extends NyaLib {
   }
 
   /**
-   * 透過 id 獲取網頁元素（假設該網頁元素一定存在）
-   * @param {string} id 網頁元素的 id
+   * 根據 ID 獲取網頁物件（默認物件已存在）
+   * @param {string} elementID 網頁元素的 ID
+   * @param {Document|HTMLElement} parentElement 從哪個 DOM 搜尋
    * @return {HTMLElement} 網頁元素物件
    */
-  static byId(id: string): HTMLElement {
-    const elementDom: HTMLElement | null = document.getElementById(id);
-    if (!elementDom) {
-      this.log("NO ID " + id, this.nyaLibName, -2);
-      return document.createElement(NyaDom.div);
+  static id(
+    elementID: string,
+    parentElement: Document | HTMLElement = document
+  ): HTMLElement {
+    const element: HTMLElement | null = NyaDom.idn(elementID, parentElement);
+    if (element == null) {
+      console.error(elementID);
+      return new HTMLElement();
     }
-    return document.getElementById(id) as HTMLElement;
+    return element;
   }
 
   /**
-   * 透過 class 獲取第一個網頁元素（假設該網頁元素一定存在）
-   * @param {string} className 網頁元素的 class
+   * 根據 ID 獲取網頁物件
+   * @param {string} elementID 網頁元素的 ID
+   * @param {Document|HTMLElement} parentElement 從哪個 DOM 搜尋
    * @return {HTMLElement} 網頁元素物件
    */
-  static byClassFirst(className: string): HTMLElement {
-    const divdoms: HTMLCollectionOf<Element> =
-      document.getElementsByClassName(className);
-    for (const key in divdoms) {
-      if (Object.prototype.hasOwnProperty.call(divdoms, key)) {
-        return divdoms[key] as HTMLElement;
+  static idn(
+    elementID: string,
+    parentElement: Document | HTMLElement = document
+  ): HTMLElement | null {
+    if (parentElement == document) {
+      const element: HTMLElement | null = document.getElementById(elementID);
+      if (element) {
+        return element;
+      }
+      return null;
+    }
+    if (parentElement && parentElement.hasChildNodes()) {
+      const children: NodeListOf<ChildNode> = parentElement.childNodes;
+      for (let i = 0; i < children.length; i++) {
+        const child: ChildNode = children[i];
+        if (
+          child.nodeType === Node.ELEMENT_NODE &&
+          (child as HTMLElement).id === elementID
+        ) {
+          return child as HTMLElement;
+        }
+        const found: HTMLElement | null = NyaDom.idn(
+          elementID,
+          child as HTMLElement
+        );
+        if (found) {
+          return found;
+        }
       }
     }
-    this.log("NO CLASS " + className, this.nyaLibName, -2);
-    return document.createElement(NyaDom.div);
+    return null;
   }
 
   /**
-   * 透過 name 獲取第一個網頁元素（假設該網頁元素一定存在）
-   * @param {string} name 網頁元素的 name
-   * @return {HTMLElement} 網頁元素物件
+   * 根據 Class 獲取網頁物件
+   * @param {string} elementClass 網頁元素的 Class
+   * @param {Document|HTMLElement} parentElement 從哪個 DOM 搜尋
+   * @return {HTMLElement[]} 網頁元素物件列表
    */
-  static byNameFirst(name: string): HTMLElement {
-    const divdoms: NodeListOf<HTMLElement> = document.getElementsByName(name);
-    for (const key in divdoms) {
-      if (Object.prototype.hasOwnProperty.call(divdoms, key)) {
-        return divdoms[key];
-      }
-    }
-    this.log("NO NAME " + name, this.nyaLibName, -2);
-    return document.createElement(NyaDom.div);
-  }
-
-  /**
-   * 透過 tag 獲取第一個網頁元素（假設該網頁元素一定存在）
-   * @param {string} tagName 網頁元素的 name
-   * @return {HTMLElement} 網頁元素物件
-   */
-  static byTagFirst(tagName: string): HTMLElement {
-    const divdoms: HTMLCollectionOf<Element> =
-      document.getElementsByTagName(tagName);
-    for (const key in divdoms) {
-      if (Object.prototype.hasOwnProperty.call(divdoms, key)) {
-        return divdoms[key] as HTMLElement;
-      }
-    }
-    this.log("NO TAG " + tagName, this.nyaLibName, -2);
-    return document.createElement(NyaDom.div);
-  }
-
-  /**
-   * 透過 name 獲取網頁元素陣列（假設該網頁元素一定存在）
-   * @param {string} name 網頁元素的 name
-   * @return {HTMLElement} 網頁元素物件
-   */
-  static byName(name: string): HTMLElement[] {
-    const elementDoms: NodeListOf<HTMLElement> =
-      document.getElementsByName(name);
+  static class(
+    elementClass: string,
+    parentElement: Document | HTMLElement = document
+  ): HTMLElement[] {
     const elements: HTMLElement[] = [];
-    for (const key in elementDoms) {
-      if (Object.prototype.hasOwnProperty.call(elementDoms, key)) {
-        const element = elementDoms[key];
-        elements.push(element);
+    const gets: HTMLCollectionOf<Element> =
+      parentElement.getElementsByClassName(elementClass);
+    for (const key in gets) {
+      if (Object.prototype.hasOwnProperty.call(gets, key)) {
+        const element = gets[key];
+        elements.push(element as HTMLElement);
       }
     }
     return elements;
   }
 
   /**
-   * 透過 tagName 獲取網頁元素陣列（假設該網頁元素一定存在）
-   * @param {string} tagName 網頁元素的 tagName
-   * @return {HTMLElement} 網頁元素物件
+   * 根據 Tag 獲取網頁物件
+   * @param {string} elementTag 網頁元素的 Tag
+   * @param {Document|HTMLElement} parentElement 從哪個 DOM 搜尋
+   * @return {HTMLElement[]} 網頁元素物件列表
    */
-  static byTagName(tagName: string): HTMLElement[] {
-    const elementDoms: HTMLCollectionOf<Element> =
-      document.getElementsByTagName(tagName);
+  static tags(
+    elementTag: string,
+    parentElement: HTMLElement | Document = document
+  ): HTMLElement[] {
     const elements: HTMLElement[] = [];
-    for (const key in elementDoms) {
-      if (Object.prototype.hasOwnProperty.call(elementDoms, key)) {
-        const element = elementDoms[key] as HTMLElement;
-        elements.push(element);
+    const gets: HTMLCollectionOf<Element> =
+      parentElement.getElementsByTagName(elementTag);
+    for (const key in gets) {
+      if (Object.prototype.hasOwnProperty.call(gets, key)) {
+        const element = gets[key];
+        elements.push(element as HTMLElement);
       }
     }
     return elements;
   }
 
   /**
-   * 透過 class 獲取網頁元素陣列（假設該網頁元素一定存在）
-   * @param {string} className 網頁元素的 class
-   * @return {HTMLElement} 網頁元素物件
+   * 根據 Name 獲取網頁物件
+   * @param {string} elementName 網頁物件的 name
+   * @param {Document|HTMLElement} parentElement 從哪個 DOM 搜尋
+   * @return {HTMLElement[]} 網頁元素物件列表
    */
-  static byClass(className: string): HTMLElement[] {
-    const elementDoms: HTMLCollectionOf<Element> =
-      document.getElementsByClassName(className);
+  static names(
+    elementName: string,
+    parentElement: Document | HTMLElement = document
+  ): HTMLElement[] {
     const elements: HTMLElement[] = [];
-    for (const key in elementDoms) {
-      if (Object.prototype.hasOwnProperty.call(elementDoms, key)) {
-        const element = elementDoms[key] as HTMLElement;
-        elements.push(element);
+    const gets: NodeListOf<HTMLElement> =
+      document.getElementsByName(elementName);
+    for (const key in gets) {
+      if (Object.prototype.hasOwnProperty.call(gets, key)) {
+        if (parentElement == document || parentElement.contains(gets[key])) {
+          elements.push(gets[key]);
+        }
       }
     }
     return elements;
