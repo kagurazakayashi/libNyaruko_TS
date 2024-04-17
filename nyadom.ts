@@ -547,7 +547,7 @@ export default class NyaDom extends NyaLib {
   static getScrollTop(
     element = document.documentElement ?? document.body
   ): number {
-    let scrollTop: number = 0;
+    let scrollTop = 0;
     if (element.scrollTop) {
       scrollTop = element.scrollTop;
     } else if (element.parentElement) {
@@ -564,7 +564,7 @@ export default class NyaDom extends NyaLib {
   static getScrollLeft(
     element = document.documentElement ?? document.body
   ): number {
-    let scrollLeft: number = 0;
+    let scrollLeft = 0;
     if (element.scrollLeft) {
       scrollLeft = element.scrollLeft;
     } else if (element.parentElement) {

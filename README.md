@@ -56,12 +56,14 @@
 
 0. 建议使用 git submodule 引入以便可选编译，你可以：
    1. 直接拷贝需要的代码文件到自己的项目中。
-   2. 在有 git 的项目中引用，命令: `git submodule add https://github.com/kagurazakayashi/libNyaruko_TS.git <下载路径>` 。
+   2. 在有 git 的项目中引用，命令: `git submodule add https://github.com/kagurazakayashi/libNyaruko_TS.git <引用路径>` 。
 1. 导入所需要功能所在的文件即可。例如：
    1. 导入 `import NyaDom from "libNyaruko_TS/nyadom";`
    2. 即可使用 `NyaDom.dom('div1');`
 2. 具体使用方式见 **[Wiki](https://github.com/kagurazakayashi/libNyaruko_TS/wiki)** 或源码中每个函数的注释。
    1. 可以执行 `python3 Tools/nyawiki.py . wiki` 生成 wiki 。
+
+注意： ESLint 规则可能会冲突，导致对本库中的代码进行报错，请将本库引用路径添加到 `.eslintignore` 。
 
 ## 详细使用帮助
 
