@@ -54,7 +54,7 @@ export default class NyaDom extends NyaLib {
       return elements; // HTMLElement[]
     } else if ((mode >= "a" && mode <= "z") || (mode >= "A" && mode <= "Z")) {
       const elements: HTMLCollectionOf<Element> =
-        document.getElementsByTagName(element);
+      parentDOM.getElementsByTagName(element);
       if (elements.length == 0) {
         return null;
       }
