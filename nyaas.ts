@@ -260,6 +260,15 @@ export default class NyaAs extends NyaLib {
   }
 
   /**
+   * 視某個 HTMLElement 為 HTMLTextAreaElement (textarea)
+   * @param {HTMLElement|Element|null} element 網頁元素物件，不提供或找不到則新建這種型別的物件
+   * @returns {HTMLTextAreaElement} 明確型別的網頁元素物件
+   */
+  static textarea(element?: HTMLElement | Element | null): HTMLTextAreaElement {
+    return this.asElement(element, "textarea") as HTMLTextAreaElement;
+  }
+
+  /**
    * 視某個 HTMLElement 為 HTMLVideoElement (video)
    * @param {HTMLElement|Element|null} element 網頁元素物件，不提供或找不到則新建這種型別的物件
    * @return {HTMLVideoElement} 明確型別的網頁元素物件
